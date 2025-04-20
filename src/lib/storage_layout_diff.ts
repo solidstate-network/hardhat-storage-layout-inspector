@@ -89,9 +89,10 @@ export const visualizeSlot = (
 
 export const getRawStorageLayout = async (
   hre: HardhatRuntimeEnvironment,
-  fullName: string,
+  contractNameOrFullyQualifiedName: string,
   ref?: string,
 ): Promise<StorageLayout> => {
+  let artifact;
   let buildInfo;
 
   if (ref) {
@@ -102,10 +103,15 @@ export const getRawStorageLayout = async (
     try {
       // TODO: import task name constant
       await hre.tasks.getTask('compile').run();
-      const buildInfoId = await hre.artifacts.getBuildInfoId(fullName);
-      const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
-        buildInfoId!,
+
+      artifact = await hre.artifacts.readArtifact(
+        contractNameOrFullyQualifiedName,
       );
+
+      const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
+        artifact.buildInfoId!,
+      );
+
       buildInfo = JSON.parse(
         await fs.promises.readFile(buildInfoPath!, 'utf-8'),
       );
@@ -118,10 +124,14 @@ export const getRawStorageLayout = async (
       await hre.tasks.getTask('compile').run();
     }
   } else {
-    const buildInfoId = await hre.artifacts.getBuildInfoId(fullName);
-    const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
-      buildInfoId!,
+    artifact = await hre.artifacts.readArtifact(
+      contractNameOrFullyQualifiedName,
     );
+
+    const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
+      artifact.buildInfoId!,
+    );
+
     buildInfo = JSON.parse(await fs.promises.readFile(buildInfoPath!, 'utf-8'));
   }
 
@@ -129,7 +139,7 @@ export const getRawStorageLayout = async (
     throw new HardhatPluginError(pkg.name, `contract not found`);
   }
 
-  const [sourceName, contractName] = fullName.split(':');
+  const { sourceName, contractName } = artifact;
 
   return (buildInfo.output.contracts[sourceName][contractName] as any)
     .storageLayout;
@@ -137,10 +147,12 @@ export const getRawStorageLayout = async (
 
 export const getCollatedStorageLayout = async function (
   hre: HardhatRuntimeEnvironment,
-  fullName: string,
+  contractNameOrFullyQualifiedName: string,
   ref?: string,
 ) {
-  return collateStorageLayout(await getRawStorageLayout(hre, fullName, ref));
+  return collateStorageLayout(
+    await getRawStorageLayout(hre, contractNameOrFullyQualifiedName, ref),
+  );
 };
 
 export const collateStorageLayout = (
