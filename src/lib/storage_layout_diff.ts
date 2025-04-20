@@ -115,7 +115,7 @@ const callAtGitRef = async <T extends () => unknown>(
   }
 };
 
-export const getRawStorageLayout = async (
+export const loadRawStorageLayout = async (
   hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedNameOrFile: string,
   ref?: string,

@@ -1,6 +1,6 @@
 import {
   collateStorageLayout,
-  getRawStorageLayout,
+  loadRawStorageLayout,
   mergeCollatedSlots,
   printMergedCollatedSlots,
 } from '../lib/storage_layout_diff.js';
@@ -21,10 +21,10 @@ const action: NewTaskActionFunction<
 
   // TODO: check default values of ref parameters
   const slotsA = collateStorageLayout(
-    await getRawStorageLayout(hre, args.a, args.aRef),
+    await loadRawStorageLayout(hre, args.a, args.aRef),
   );
   const slotsB = collateStorageLayout(
-    await getRawStorageLayout(hre, args.b, args.bRef),
+    await loadRawStorageLayout(hre, args.b, args.bRef),
   );
 
   const mergedSlots = mergeCollatedSlots(slotsA, slotsB);

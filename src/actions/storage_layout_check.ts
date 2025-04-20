@@ -1,6 +1,6 @@
 import {
   collateStorageLayout,
-  getRawStorageLayout,
+  loadRawStorageLayout,
   mergeCollatedSlots,
   printMergedCollatedSlots,
 } from '../lib/storage_layout_diff.js';
@@ -23,7 +23,7 @@ const action: NewTaskActionFunction<
     JSON.parse(fs.readFileSync(args.source, 'utf-8')),
   );
   const slotsB = collateStorageLayout(
-    await getRawStorageLayout(hre, args.b, args.bRef),
+    await loadRawStorageLayout(hre, args.b, args.bRef),
   );
 
   const mergedSlots = mergeCollatedSlots(slotsA, slotsB);
