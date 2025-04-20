@@ -10,7 +10,7 @@ contract Test {
     struct Struct {
         address a;
         E e;
-        address b;
+        address b_changed;
         E f;
     }
 
