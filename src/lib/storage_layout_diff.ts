@@ -93,30 +93,30 @@ const callAtGitRef = async <T extends () => unknown>(
   cb: T,
   ref?: string,
 ): Promise<ReturnType<T>> => {
-  if (ref) {
-    const repository = simpleGit();
-
-    try {
-      await repository.checkout(ref);
-    } catch (error) {
-      throw new HardhatPluginError(pkg.name, error as string);
-    }
-
-    try {
-      // TODO: import task name constant
-      await hre.tasks.getTask('compile').run();
-
-      return (await cb()) as ReturnType<T>;
-    } catch (error) {
-      throw error;
-    } finally {
-      await repository.checkout('-');
-      // TODO: create a temp hre or set hre.config.paths.artifacts to avoid the need for recompilation
-      // TODO: import task name constant
-      await hre.tasks.getTask('compile').run();
-    }
-  } else {
+  if (!ref) {
     return (await cb()) as ReturnType<T>;
+  }
+
+  const repository = simpleGit();
+
+  try {
+    await repository.checkout(ref);
+  } catch (error) {
+    throw new HardhatPluginError(pkg.name, error as string);
+  }
+
+  try {
+    // TODO: import task name constant
+    await hre.tasks.getTask('compile').run();
+
+    return (await cb()) as ReturnType<T>;
+  } catch (error) {
+    throw error;
+  } finally {
+    await repository.checkout('-');
+    // TODO: create a temp hre or set hre.config.paths.artifacts to avoid the need for recompilation
+    // TODO: import task name constant
+    await hre.tasks.getTask('compile').run();
   }
 };
 
