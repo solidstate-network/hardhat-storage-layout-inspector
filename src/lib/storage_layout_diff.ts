@@ -87,14 +87,11 @@ export const visualizeSlot = (
   );
 };
 
-export const getRawStorageLayout = async (
+const callAtGitRef = async <T extends () => unknown>(
   hre: HardhatRuntimeEnvironment,
-  contractNameOrFullyQualifiedName: string,
+  cb: T,
   ref?: string,
-): Promise<StorageLayout> => {
-  let artifact;
-  let buildInfo;
-
+): Promise<ReturnType<T>> => {
   if (ref) {
     const repository = simpleGit();
     await repository.init();
@@ -104,17 +101,7 @@ export const getRawStorageLayout = async (
       // TODO: import task name constant
       await hre.tasks.getTask('compile').run();
 
-      artifact = await hre.artifacts.readArtifact(
-        contractNameOrFullyQualifiedName,
-      );
-
-      const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
-        artifact.buildInfoId!,
-      );
-
-      buildInfo = JSON.parse(
-        await fs.promises.readFile(buildInfoPath!, 'utf-8'),
-      );
+      return (await cb()) as ReturnType<T>;
     } catch (error) {
       throw error;
     } finally {
@@ -124,16 +111,44 @@ export const getRawStorageLayout = async (
       await hre.tasks.getTask('compile').run();
     }
   } else {
-    artifact = await hre.artifacts.readArtifact(
-      contractNameOrFullyQualifiedName,
-    );
-
-    const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
-      artifact.buildInfoId!,
-    );
-
-    buildInfo = JSON.parse(await fs.promises.readFile(buildInfoPath!, 'utf-8'));
+    return (await cb()) as ReturnType<T>;
   }
+};
+
+export const getRawStorageLayout = async (
+  hre: HardhatRuntimeEnvironment,
+  contractNameOrFullyQualifiedNameOrFile: string,
+  ref?: string,
+): Promise<StorageLayout> => {
+  // TODO: if name is path, read from file
+  // const slotsA = collateStorageLayout(
+  //   JSON.parse(fs.readFileSync(args.contract, 'utf-8')),
+  // );
+
+  const cb = getRawStorageLayoutFromArtifact.bind(
+    undefined,
+    hre,
+    contractNameOrFullyQualifiedNameOrFile,
+  );
+
+  return await callAtGitRef(hre, cb, ref);
+};
+
+const getRawStorageLayoutFromArtifact = async (
+  hre: HardhatRuntimeEnvironment,
+  contractNameOrFullyQualifiedName: string,
+): Promise<StorageLayout> => {
+  const artifact = await hre.artifacts.readArtifact(
+    contractNameOrFullyQualifiedName,
+  );
+
+  const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
+    artifact.buildInfoId!,
+  );
+
+  const buildInfo = JSON.parse(
+    await fs.promises.readFile(buildInfoPath!, 'utf-8'),
+  );
 
   if (!buildInfo) {
     throw new HardhatPluginError(pkg.name, `contract not found`);
