@@ -24,3 +24,5 @@ const action: NewTaskActionFunction<
 
   printMergedCollatedSlots(data);
 };
+
+export default action;
