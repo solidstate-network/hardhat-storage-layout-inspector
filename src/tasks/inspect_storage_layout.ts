@@ -6,5 +6,10 @@ export default task(TASK_INSPECT_STORAGE_LAYOUT)
     name: 'contract',
     description: 'Contract whose storage layout to inspect',
   })
+  .addOption({
+    name: 'ref',
+    description: 'Git reference where contract is defined',
+    defaultValue: '',
+  })
   .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
   .build();

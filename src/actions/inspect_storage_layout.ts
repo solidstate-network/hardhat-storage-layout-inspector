@@ -7,6 +7,7 @@ import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
   contract: string;
+  ref: string;
 }
 
 const action: NewTaskActionFunction<
@@ -16,7 +17,7 @@ const action: NewTaskActionFunction<
   await hre.tasks.getTask('compile').run();
 
   const slots = collateStorageLayout(
-    await getRawStorageLayout(hre, args.contract),
+    await getRawStorageLayout(hre, args.contract, args.ref),
   );
 
   printCollatedSlots(slots);
