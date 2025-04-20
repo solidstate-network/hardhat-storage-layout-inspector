@@ -95,8 +95,12 @@ const callAtGitRef = async <T extends () => unknown>(
 ): Promise<ReturnType<T>> => {
   if (ref) {
     const repository = simpleGit();
-    await repository.init();
-    await repository.checkout(ref);
+
+    try {
+      await repository.checkout(ref);
+    } catch (error) {
+      throw new HardhatPluginError(pkg.name, error as string);
+    }
 
     try {
       // TODO: import task name constant
