@@ -6,6 +6,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const action: NewTaskActionFunction = async (args, hre) => {
+  // TODO: import task name constant
+  await hre.tasks.getTask('compile').run();
+
   const config = hre.config.storageLayoutDiff;
 
   const outputDirectory = path.resolve(hre.config.paths.root, config.path);

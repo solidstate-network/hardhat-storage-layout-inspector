@@ -16,6 +16,9 @@ interface StorageLayoutCheckTaskActionArguments {
 const action: NewTaskActionFunction<
   StorageLayoutCheckTaskActionArguments
 > = async (args, hre) => {
+  // TODO: import task name constant
+  await hre.tasks.getTask('compile').run();
+
   const slotsA = collateStorageLayout(
     JSON.parse(fs.readFileSync(args.source, 'utf-8')),
   );
