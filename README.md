@@ -15,7 +15,16 @@ yarn add --dev hardhat-storage-layout-diff
 Load plugin in Hardhat config:
 
 ```javascript
-require('hardhat-storage-layout-diff');
+import HardhatStorageLayoutDiff from 'hardhat-storage-layout-diff';
+
+const config: HardhatUserConfig = {
+  plugins: [
+    HardhatStorageLayoutDiff,
+  ],
+  storageLayoutDiff: {
+    ... // see table for configuration options
+  },
+};
 ```
 
 Add configuration under the `storageLayoutDiff` key:
@@ -37,23 +46,25 @@ npx hardhat export-storage-layout
 yarn run hardhat export-storage-layout
 ```
 
+Inspect a contract's storage layout:
+
+```bash
+npx hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
+# or
+yarn run hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
+```
+
 Compare two contracts:
 
 ```bash
-npx hardhat diff-storage-layout [CONTRACT_A_FULLY_QUALIFIED_NAME] [CONTRACT_B_FULLY_QUALIFIED_NAME]
+npx hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 # or
-yarn run hardhat diff-storage-layout [CONTRACT_A_FULLY_QUALIFIED_NAME] [CONTRACT_B_FULLY_QUALIFIED_NAME]
+yarn run hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 ```
 
-Include the optional `--a-ref` and/or `--b-ref` arguments to specify the git reference where contracts `a` and `b` are defined, respectively.
+A contract identifier may be a name, a fully qualified name, or a path to a JSON file containing a storage layout.
 
-Compare a contract to an exported JSON layout:
-
-```bash
-npx hardhat diff-storage-layout [PATH_TO_LAYOUT_JSON] [CONTRACT_B_FULLY_QUALIFIED_NAME]
-# or
-yarn run hardhat diff-storage-layout [PATH_TO_LAYOUT_JSON] [CONTRACT_B_FULLY_QUALIFIED_NAME]
-```
+Include the optional git ref options to look up a contract identifier at a particular git reference.
 
 ## Development
 
