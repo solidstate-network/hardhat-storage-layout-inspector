@@ -5,6 +5,7 @@ import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
 import fs from 'node:fs';
+import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
 type StorageElement = {
@@ -120,18 +121,29 @@ export const loadRawStorageLayout = async (
   contractNameOrFullyQualifiedNameOrFile: string,
   ref?: string,
 ): Promise<StorageLayout> => {
-  // TODO: if name is path, read from file
-  // const slotsA = collateStorageLayout(
-  //   JSON.parse(fs.readFileSync(args.contract, 'utf-8')),
-  // );
+  let cb;
 
-  const cb = getRawStorageLayoutFromArtifact.bind(
-    undefined,
-    hre,
-    contractNameOrFullyQualifiedNameOrFile,
-  );
+  if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
+    cb = getRawStorageLayoutFromFile.bind(
+      undefined,
+      contractNameOrFullyQualifiedNameOrFile,
+    );
+  } else {
+    cb = getRawStorageLayoutFromArtifact.bind(
+      undefined,
+      hre,
+      contractNameOrFullyQualifiedNameOrFile,
+    );
+  }
 
   return await callAtGitRef(hre, cb, ref);
+};
+
+const getRawStorageLayoutFromFile = async (
+  fileName: string,
+): Promise<StorageLayout> => {
+  // TODO: validate that JSON is a StorageLayout
+  return JSON.parse(await fs.promises.readFile(fileName, 'utf-8'));
 };
 
 const getRawStorageLayoutFromArtifact = async (
