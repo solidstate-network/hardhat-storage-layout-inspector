@@ -1,5 +1,6 @@
 import {
-  getCollatedStorageLayout,
+  collateStorageLayout,
+  getRawStorageLayout,
   mergeCollatedSlots,
   printMergedCollatedSlots,
 } from '../lib/storage_layout_diff.js';
@@ -19,12 +20,16 @@ const action: NewTaskActionFunction<
   await hre.tasks.getTask('compile').run();
 
   // TODO: check default values of ref parameters
-  const slotsA = await getCollatedStorageLayout(hre, args.a, args.aRef);
-  const slotsB = await getCollatedStorageLayout(hre, args.b, args.bRef);
+  const slotsA = collateStorageLayout(
+    await getRawStorageLayout(hre, args.a, args.aRef),
+  );
+  const slotsB = collateStorageLayout(
+    await getRawStorageLayout(hre, args.b, args.bRef),
+  );
 
-  const slots = mergeCollatedSlots(slotsA, slotsB);
+  const mergedSlots = mergeCollatedSlots(slotsA, slotsB);
 
-  printMergedCollatedSlots(slots);
+  printMergedCollatedSlots(mergedSlots);
 };
 
 export default action;

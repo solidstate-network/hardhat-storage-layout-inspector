@@ -145,16 +145,6 @@ export const getRawStorageLayout = async (
     .storageLayout;
 };
 
-export const getCollatedStorageLayout = async function (
-  hre: HardhatRuntimeEnvironment,
-  contractNameOrFullyQualifiedName: string,
-  ref?: string,
-) {
-  return collateStorageLayout(
-    await getRawStorageLayout(hre, contractNameOrFullyQualifiedName, ref),
-  );
-};
-
 export const collateStorageLayout = (
   storageLayout: StorageLayout,
 ): CollatedSlot[] => {
