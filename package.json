@@ -1,6 +1,6 @@
 {
-  "name": "hardhat-storage-layout-diff",
-  "version": "0.0.4",
+  "name": "@solidstate/hardhat-storage-layout-diff",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Compare storage layouts between two contracts",
   "keywords": [
@@ -14,7 +14,7 @@
     "blockchain",
     "wow"
   ],
-  "repository": "https://github.com/ItsNickBarry/hardhat-storage-layout-diff",
+  "repository": "github:solidstate-network/hardhat-storage-layout-diff",
   "author": "Nick Barry",
   "type": "module",
   "main": "dist/src/index.js",
@@ -48,5 +48,8 @@
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "simple-git": "^3.27.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

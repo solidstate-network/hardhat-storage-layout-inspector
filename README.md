@@ -2,12 +2,14 @@
 
 Inspect and compare Solidity smart contract storage layouts.
 
+> Versions of this plugin prior to `1.0.0` were released as `hardhat-storage-layout-diff`, outside of the `@solidstate` namespace.
+
 ## Installation
 
 ```bash
-npm install --save-dev hardhat-storage-layout-diff
+npm install --save-dev @solidstate/hardhat-storage-layout-diff
 # or
-yarn add --dev hardhat-storage-layout-diff
+yarn add --dev @solidstate/hardhat-storage-layout-diff
 ```
 
 ## Usage
@@ -15,7 +17,7 @@ yarn add --dev hardhat-storage-layout-diff
 Load plugin in Hardhat config:
 
 ```javascript
-import HardhatStorageLayoutDiff from 'hardhat-storage-layout-diff';
+import HardhatStorageLayoutDiff from '@solidstate/hardhat-storage-layout-diff';
 
 const config: HardhatUserConfig = {
   plugins: [
