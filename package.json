@@ -22,6 +22,7 @@
   "scripts": {
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
+    "postinstall": "patch-package",
     "prepare": "husky",
     "prettier": "prettier --write ."
   },
