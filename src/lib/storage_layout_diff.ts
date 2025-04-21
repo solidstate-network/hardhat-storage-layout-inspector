@@ -126,13 +126,11 @@ const getTmpHreAtGitRef = async (
   const tmpConfig = await import(tmpConfigPath);
 
   // TODO: if possible, load createHardhatRuntimeEnvironment from hardhat version found in ref commit
-  const tmpHre = await createHardhatRuntimeEnvironment(
+  return await createHardhatRuntimeEnvironment(
     tmpConfig.default,
     { config: tmpConfigPath },
     tmpdir,
   );
-
-  return tmpHre;
 };
 
 export const loadRawStorageLayout = async (
