@@ -128,9 +128,9 @@ export const loadRawStorageLayout = async (
   let cb;
 
   if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
-    cb = getRawStorageLayoutFromFile.bind(
-      undefined,
+    return await getRawStorageLayoutFromFile(
       contractNameOrFullyQualifiedNameOrFile,
+      ref,
     );
   } else {
     cb = getRawStorageLayoutFromArtifact.bind(
@@ -145,9 +145,24 @@ export const loadRawStorageLayout = async (
 
 const getRawStorageLayoutFromFile = async (
   fileName: string,
+  ref?: string,
 ): Promise<StorageLayout> => {
+  let contents;
+
+  if (ref) {
+    // TODO: cwd
+    const git = simpleGit();
+    try {
+      contents = await git.show(`${ref}:${fileName}`);
+    } catch (error) {
+      throw new HardhatPluginError(pkg.name, error as string);
+    }
+  } else {
+    contents = await fs.promises.readFile(fileName, 'utf-8');
+  }
+
   // TODO: validate that JSON is a StorageLayout
-  return JSON.parse(await fs.promises.readFile(fileName, 'utf-8'));
+  return JSON.parse(contents);
 };
 
 const getRawStorageLayoutFromArtifact = async (
