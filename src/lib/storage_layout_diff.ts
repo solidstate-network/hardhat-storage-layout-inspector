@@ -135,30 +135,6 @@ const getTmpHreAtGitRef = async (
   return tmpHre;
 };
 
-const callAtGitRef = async <
-  T extends (hre: HardhatRuntimeEnvironment) => unknown,
->(
-  hre: HardhatRuntimeEnvironment,
-  cb: T,
-  ref?: string,
-): Promise<ReturnType<T>> => {
-  if (!ref) {
-    return (await cb(hre)) as ReturnType<T>;
-  }
-
-  // TODO: set output selection in tmpHre config
-  const tmpHre = await getTmpHreAtGitRef(hre, ref);
-
-  try {
-    // TODO: import task name constant
-    await tmpHre.tasks.getTask('compile').run();
-
-    return (await cb(tmpHre)) as ReturnType<T>;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const loadRawStorageLayout = async (
   hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedNameOrFile: string,
@@ -170,12 +146,13 @@ export const loadRawStorageLayout = async (
       ref,
     );
   } else {
-    const cb = getRawStorageLayoutFromArtifact.bind(
-      undefined,
+    const tmpHre = await getTmpHreAtGitRef(hre, ref);
+    await tmpHre.tasks.getTask('compile').run();
+
+    return await getRawStorageLayoutFromArtifact(
+      tmpHre,
       contractNameOrFullyQualifiedNameOrFile,
     );
-
-    return await callAtGitRef(hre, cb, ref);
   }
 };
 
@@ -202,8 +179,8 @@ const getRawStorageLayoutFromFile = async (
 };
 
 const getRawStorageLayoutFromArtifact = async (
-  contractNameOrFullyQualifiedName: string,
   hre: HardhatRuntimeEnvironment,
+  contractNameOrFullyQualifiedName: string,
 ): Promise<StorageLayout> => {
   const artifact = await hre.artifacts.readArtifact(
     contractNameOrFullyQualifiedName,
