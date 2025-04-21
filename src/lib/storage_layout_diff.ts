@@ -88,13 +88,15 @@ export const visualizeSlot = (
   );
 };
 
-const callAtGitRef = async <T extends () => unknown>(
+const callAtGitRef = async <
+  T extends (hre: HardhatRuntimeEnvironment) => unknown,
+>(
   hre: HardhatRuntimeEnvironment,
   cb: T,
   ref?: string,
 ): Promise<ReturnType<T>> => {
   if (!ref) {
-    return (await cb()) as ReturnType<T>;
+    return (await cb(hre)) as ReturnType<T>;
   }
 
   const repository = simpleGit();
@@ -109,7 +111,7 @@ const callAtGitRef = async <T extends () => unknown>(
     // TODO: import task name constant
     await hre.tasks.getTask('compile').run();
 
-    return (await cb()) as ReturnType<T>;
+    return (await cb(hre)) as ReturnType<T>;
   } catch (error) {
     throw error;
   } finally {
@@ -133,7 +135,6 @@ export const loadRawStorageLayout = async (
   } else {
     const cb = getRawStorageLayoutFromArtifact.bind(
       undefined,
-      hre,
       contractNameOrFullyQualifiedNameOrFile,
     );
 
@@ -164,8 +165,8 @@ const getRawStorageLayoutFromFile = async (
 };
 
 const getRawStorageLayoutFromArtifact = async (
-  hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedName: string,
+  hre: HardhatRuntimeEnvironment,
 ): Promise<StorageLayout> => {
   const artifact = await hre.artifacts.readArtifact(
     contractNameOrFullyQualifiedName,
