@@ -186,6 +186,7 @@ const getRawStorageLayoutFromArtifact = async (
 
   const { sourceName, contractName } = artifact;
 
+  // TODO: validate that JSON contains a StorageLayout
   return (buildInfo.output.contracts[sourceName][contractName] as any)
     .storageLayout;
 };
