@@ -1,10 +1,13 @@
 import pkg from '../../package.json';
 import chalk from 'chalk';
 import Table from 'cli-table3';
+import { createHardhatRuntimeEnvironment } from 'hardhat/hre';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
+import child_process from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
@@ -88,6 +91,50 @@ export const visualizeSlot = (
   );
 };
 
+const getTmpHreAtGitRef = async (
+  hre: HardhatRuntimeEnvironment,
+  ref?: string,
+): Promise<HardhatRuntimeEnvironment> => {
+  if (!ref) {
+    return hre;
+  }
+
+  const git = simpleGit(hre.config.paths.root);
+
+  ref = await git.revparse(ref);
+
+  const tmpdir = path.resolve(os.tmpdir(), pkg.name, ref);
+
+  await fs.promises.mkdir(tmpdir, { recursive: true });
+
+  await git.cwd(tmpdir);
+
+  if (!(await git.checkIsRepo())) {
+    await git.init();
+    await git.addRemote('origin', hre.config.paths.root);
+    await git.fetch('origin', ref, { '--depth': 1 });
+    await git.checkout(ref);
+
+    child_process.spawnSync('npm', ['install'], {
+      cwd: tmpdir,
+      stdio: 'inherit',
+    });
+  }
+
+  // TODO: ensure correct config name
+  const tmpConfigPath = path.resolve(tmpdir, 'hardhat.config.ts');
+  const tmpConfig = await import(tmpConfigPath);
+
+  // TODO: if possible, load createHardhatRuntimeEnvironment from hardhat version found in ref commit
+  const tmpHre = await createHardhatRuntimeEnvironment(
+    tmpConfig.default,
+    { config: tmpConfigPath },
+    tmpdir,
+  );
+
+  return tmpHre;
+};
+
 const callAtGitRef = async <
   T extends (hre: HardhatRuntimeEnvironment) => unknown,
 >(
@@ -99,26 +146,16 @@ const callAtGitRef = async <
     return (await cb(hre)) as ReturnType<T>;
   }
 
-  const repository = simpleGit();
-
-  try {
-    await repository.checkout(ref);
-  } catch (error) {
-    throw new HardhatPluginError(pkg.name, error as string);
-  }
+  // TODO: set output selection in tmpHre config
+  const tmpHre = await getTmpHreAtGitRef(hre, ref);
 
   try {
     // TODO: import task name constant
-    await hre.tasks.getTask('compile').run();
+    await tmpHre.tasks.getTask('compile').run();
 
-    return (await cb(hre)) as ReturnType<T>;
+    return (await cb(tmpHre)) as ReturnType<T>;
   } catch (error) {
     throw error;
-  } finally {
-    await repository.checkout('-');
-    // TODO: create a temp hre or set hre.config.paths.artifacts to avoid the need for recompilation
-    // TODO: import task name constant
-    await hre.tasks.getTask('compile').run();
   }
 };
 
