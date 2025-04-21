@@ -125,22 +125,20 @@ export const loadRawStorageLayout = async (
   contractNameOrFullyQualifiedNameOrFile: string,
   ref?: string,
 ): Promise<StorageLayout> => {
-  let cb;
-
   if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
     return await getRawStorageLayoutFromFile(
       contractNameOrFullyQualifiedNameOrFile,
       ref,
     );
   } else {
-    cb = getRawStorageLayoutFromArtifact.bind(
+    const cb = getRawStorageLayoutFromArtifact.bind(
       undefined,
       hre,
       contractNameOrFullyQualifiedNameOrFile,
     );
-  }
 
-  return await callAtGitRef(hre, cb, ref);
+    return await callAtGitRef(hre, cb, ref);
+  }
 };
 
 const getRawStorageLayoutFromFile = async (
