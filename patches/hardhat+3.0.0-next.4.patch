@@ -1,28 +1,34 @@
 diff --git a/node_modules/hardhat/dist/src/internal/builtin-plugins/solidity/build-system/compilation-job.js b/node_modules/hardhat/dist/src/internal/builtin-plugins/solidity/build-system/compilation-job.js
-index c250a14..640899a 100644
+index c250a14..74724b8 100644
 --- a/node_modules/hardhat/dist/src/internal/builtin-plugins/solidity/build-system/compilation-job.js
 +++ b/node_modules/hardhat/dist/src/internal/builtin-plugins/solidity/build-system/compilation-job.js
-@@ -77,6 +77,23 @@ export class CompilationJobImplementation {
+@@ -75,8 +75,28 @@ export class CompilationJobImplementation {
+                 "": ["ast"],
+             },
          };
-         // TODO: Deep merge the user output selection with the default one
+-        // TODO: Deep merge the user output selection with the default one
++        
          const outputSelection = defaultOutputSelection;
-+
 +        const configOutputSelection = settings.outputSelection ?? {};
-+
-+        for (const fileKey in configOutputSelection) {
-+            const configFileOutputSelection = configOutputSelection[fileKey] ?? {};
-+            outputSelection[fileKey] ??= {};
-+            for (const contractKey in configFileOutputSelection) {
-+                const configContractOutputSelection = configFileOutputSelection[contractKey] ?? [];
-+                outputSelection[fileKey][contractKey] ??= [];
-+
-+                const values = Array.from(new Set([...outputSelection[fileKey][contractKey], ...configContractOutputSelection]))
-+                values.sort();
-+
-+                outputSelection[fileKey][contractKey] = values;
-+            }
++    
++        for (const fileKey of Object.keys(configOutputSelection).sort()) {
++          outputSelection[fileKey] ??= {};
++          const configFileOutputSelection = configOutputSelection[fileKey] ?? {};
++    
++          for (const contractKey of Object.keys(configFileOutputSelection).sort()) {
++            outputSelection[fileKey][contractKey] ??= [];
++            const configContractOutputSelection =
++              configFileOutputSelection[contractKey] ?? [];
++    
++            outputSelection[fileKey][contractKey] = Array.from(
++              new Set([
++                ...outputSelection[fileKey][contractKey],
++                ...configContractOutputSelection,
++              ]),
++            ).sort();
++          }
 +        }
-+
++    
          return {
              language: "Solidity",
              settings: {
