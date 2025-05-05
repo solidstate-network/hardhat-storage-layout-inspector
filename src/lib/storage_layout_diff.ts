@@ -121,10 +121,12 @@ const getTmpHreAtGitRef = async (
       });
     }
   } catch (error) {
+    // TODO: clean up can be easily interrupted if NPM encounters connectivity problems
     await fs.promises.rm(tmpdir, { recursive: true, force: true });
     throw new HardhatPluginError(pkg.name, error as string);
   }
 
+  // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(
     path.resolve(tmpdir, 'node_modules/hardhat/dist/src/hre')
   );
@@ -157,6 +159,7 @@ export const loadRawStorageLayout = async (
       ref,
     );
   } else {
+    // TODO: initialize hre with plugin or user config containing storageLayout output selection
     const tmpHre = await getTmpHreAtGitRef(hre, ref);
 
     await tmpHre.tasks.getTask('compile').run();
