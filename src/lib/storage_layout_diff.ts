@@ -1,7 +1,6 @@
 import pkg from '../../package.json';
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import { createHardhatRuntimeEnvironment } from 'hardhat/hre';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
@@ -130,7 +129,10 @@ const getTmpHreAtGitRef = async (
   const tmpConfigPath = path.resolve(tmpdir, 'hardhat.config.ts');
   const tmpConfig = await import(tmpConfigPath);
 
-  // TODO: if possible, load createHardhatRuntimeEnvironment from hardhat version found in ref commit
+  const { createHardhatRuntimeEnvironment } = await import(
+    path.resolve(tmpdir, 'node_modules/hardhat/dist/src/hre')
+  );
+
   return await createHardhatRuntimeEnvironment(
     tmpConfig.default,
     { config: tmpConfigPath },
