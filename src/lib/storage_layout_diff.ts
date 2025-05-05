@@ -109,16 +109,21 @@ const getTmpHreAtGitRef = async (
 
   await git.cwd(tmpdir);
 
-  if (!(await git.checkIsRepo())) {
-    await git.init();
-    await git.addRemote('origin', hre.config.paths.root);
-    await git.fetch('origin', ref, { '--depth': 1 });
-    await git.checkout(ref);
+  try {
+    if (!(await git.checkIsRepo())) {
+      await git.init();
+      await git.addRemote('origin', hre.config.paths.root);
+      await git.fetch('origin', ref, { '--depth': 1 });
+      await git.checkout(ref);
 
-    child_process.spawnSync('npm', ['install'], {
-      cwd: tmpdir,
-      stdio: 'inherit',
-    });
+      child_process.spawnSync('npm', ['install'], {
+        cwd: tmpdir,
+        stdio: 'inherit',
+      });
+    }
+  } catch (error) {
+    await fs.promises.rm(tmpdir, { recursive: true, force: true });
+    throw new HardhatPluginError(pkg.name, error as string);
   }
 
   // TODO: ensure correct config name
@@ -145,6 +150,7 @@ export const loadRawStorageLayout = async (
     );
   } else {
     const tmpHre = await getTmpHreAtGitRef(hre, ref);
+
     await tmpHre.tasks.getTask('compile').run();
 
     return await getRawStorageLayoutFromArtifact(
@@ -160,16 +166,16 @@ const getRawStorageLayoutFromFile = async (
 ): Promise<StorageLayout> => {
   let contents;
 
-  if (ref) {
-    // TODO: cwd
-    const git = simpleGit();
-    try {
+  try {
+    if (ref) {
+      // TODO: cwd
+      const git = simpleGit();
       contents = await git.show(`${ref}:${fileName}`);
-    } catch (error) {
-      throw new HardhatPluginError(pkg.name, error as string);
+    } else {
+      contents = await fs.promises.readFile(fileName, 'utf-8');
     }
-  } else {
-    contents = await fs.promises.readFile(fileName, 'utf-8');
+  } catch (error) {
+    throw new HardhatPluginError(pkg.name, error as string);
   }
 
   // TODO: validate that JSON is a StorageLayout
