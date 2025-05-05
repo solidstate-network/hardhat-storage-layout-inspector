@@ -99,17 +99,26 @@ const getTmpHreAtGitRef = async (
   }
 
   const git = simpleGit(hre.config.paths.root);
-
   ref = await git.revparse(ref);
 
   const tmpdir = path.resolve(os.tmpdir(), pkg.name, ref);
+  const pendingSetupIndicatorFile = path.resolve(tmpdir, '.setup_pending');
 
-  await fs.promises.mkdir(tmpdir, { recursive: true });
+  // if the pending setup indicator file is present, a previous setup failure has not been caught,
+  // likely due to network connectivity issues; delete the temporary directory and try again
 
-  await git.cwd(tmpdir);
+  if (fs.existsSync(pendingSetupIndicatorFile)) {
+    await fs.promises.rm(tmpdir, { recursive: true, force: true });
+  }
 
   try {
+    await fs.promises.mkdir(tmpdir, { recursive: true });
+
+    await git.cwd(tmpdir);
+
     if (!(await git.checkIsRepo())) {
+      await fs.promises.writeFile(pendingSetupIndicatorFile, '');
+
       await git.init();
       await git.addRemote('origin', hre.config.paths.root);
       await git.fetch('origin', ref, { '--depth': 1 });
@@ -119,9 +128,10 @@ const getTmpHreAtGitRef = async (
         cwd: tmpdir,
         stdio: 'inherit',
       });
+
+      await fs.promises.rm(pendingSetupIndicatorFile);
     }
   } catch (error) {
-    // TODO: clean up can be easily interrupted if NPM encounters connectivity problems
     await fs.promises.rm(tmpdir, { recursive: true, force: true });
     throw new HardhatPluginError(pkg.name, error as string);
   }
