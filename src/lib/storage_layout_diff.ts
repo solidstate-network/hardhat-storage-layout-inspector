@@ -125,13 +125,19 @@ const getTmpHreAtGitRef = async (
     throw new HardhatPluginError(pkg.name, error as string);
   }
 
-  // TODO: ensure correct config name
-  const tmpConfigPath = path.resolve(tmpdir, 'hardhat.config.ts');
-  const tmpConfig = await import(tmpConfigPath);
-
   const { createHardhatRuntimeEnvironment } = await import(
     path.resolve(tmpdir, 'node_modules/hardhat/dist/src/hre')
   );
+
+  const { findClosestHardhatConfig } = await import(
+    path.resolve(
+      tmpdir,
+      'node_modules/hardhat/dist/src/internal/config-loading',
+    )
+  );
+
+  const tmpConfigPath = await findClosestHardhatConfig(tmpdir);
+  const tmpConfig = await import(tmpConfigPath);
 
   return await createHardhatRuntimeEnvironment(
     tmpConfig.default,
