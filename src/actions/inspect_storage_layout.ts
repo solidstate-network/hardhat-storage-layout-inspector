@@ -1,7 +1,7 @@
+import { printCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
   loadRawStorageLayout,
-  printCollatedSlots,
 } from '../lib/storage_layout_diff.js';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
