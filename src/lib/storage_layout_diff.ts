@@ -78,13 +78,13 @@ const getTmpHreAtGitRef = async (
   );
 };
 
-export const loadRawStorageLayout = async (
+export const loadStorageLayout = async (
   hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedNameOrFile: string,
   ref?: string,
 ): Promise<StorageLayout> => {
   if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
-    return await getRawStorageLayoutFromFile(
+    return await getStorageLayoutFromFile(
       contractNameOrFullyQualifiedNameOrFile,
       ref,
     );
@@ -94,14 +94,14 @@ export const loadRawStorageLayout = async (
 
     await tmpHre.tasks.getTask('compile').run();
 
-    return await getRawStorageLayoutFromArtifact(
+    return await getStorageLayoutFromArtifact(
       tmpHre,
       contractNameOrFullyQualifiedNameOrFile,
     );
   }
 };
 
-const getRawStorageLayoutFromFile = async (
+const getStorageLayoutFromFile = async (
   fileName: string,
   ref?: string,
 ): Promise<StorageLayout> => {
@@ -123,7 +123,7 @@ const getRawStorageLayoutFromFile = async (
   return JSON.parse(contents);
 };
 
-const getRawStorageLayoutFromArtifact = async (
+const getStorageLayoutFromArtifact = async (
   hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedName: string,
 ): Promise<StorageLayout> => {

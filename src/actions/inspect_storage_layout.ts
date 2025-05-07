@@ -1,7 +1,7 @@
 import { printCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
-  loadRawStorageLayout,
+  loadStorageLayout,
 } from '../lib/storage_layout_diff.js';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
@@ -17,7 +17,7 @@ const action: NewTaskActionFunction<
   await hre.tasks.getTask('compile').run();
 
   const slots = collateStorageLayout(
-    await loadRawStorageLayout(hre, args.contract, args.ref),
+    await loadStorageLayout(hre, args.contract, args.ref),
   );
 
   printCollatedSlots(slots);

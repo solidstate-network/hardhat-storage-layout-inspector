@@ -1,7 +1,7 @@
 import { printMergedCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
-  loadRawStorageLayout,
+  loadStorageLayout,
   mergeCollatedSlots,
 } from '../lib/storage_layout_diff.js';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
@@ -21,10 +21,10 @@ const action: NewTaskActionFunction<
 
   // TODO: check default values of ref parameters
   const slotsA = collateStorageLayout(
-    await loadRawStorageLayout(hre, args.a, args.aRef),
+    await loadStorageLayout(hre, args.a, args.aRef),
   );
   const slotsB = collateStorageLayout(
-    await loadRawStorageLayout(hre, args.b, args.bRef),
+    await loadStorageLayout(hre, args.b, args.bRef),
   );
 
   const mergedSlots = mergeCollatedSlots(slotsA, slotsB);

@@ -1,5 +1,5 @@
 import pkg from '../../package.json';
-import { loadRawStorageLayout } from '../lib/storage_layout_diff.js';
+import { loadStorageLayout } from '../lib/storage_layout_diff.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 import fs from 'node:fs';
@@ -41,7 +41,7 @@ const action: NewTaskActionFunction = async (args, hre) => {
     if (config.except.length && config.except.some((m) => fullName.match(m)))
       continue;
 
-    const storageLayout = await loadRawStorageLayout(hre, fullName);
+    const storageLayout = await loadStorageLayout(hre, fullName);
     const { storage, types } = storageLayout;
 
     if (!storage.length) continue;
