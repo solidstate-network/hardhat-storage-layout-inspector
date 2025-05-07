@@ -26,7 +26,6 @@
   "scripts": {
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
-    "postinstall": "patch-package",
     "prepare": "husky",
     "prettier": "prettier --write ."
   },
@@ -37,11 +36,10 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/node": "^22.15.14",
-    "hardhat": "^3.0.0-next.6",
+    "@types/node": "^22.15.15",
+    "hardhat": "^3.0.0-next.7",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "patch-package": "^8.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-packagejson": "^2.5.11",
     "prettier-plugin-solidity": "^2.0.0",
