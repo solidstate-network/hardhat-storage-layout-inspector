@@ -2,11 +2,7 @@ import type { CollatedSlot, MergedCollatedSlot } from '../types.js';
 import chalk from 'chalk';
 import Table from 'cli-table3';
 
-export const visualizeSlot = (
-  offset: number,
-  size: number,
-  slotFill: number,
-) => {
+const visualizeSlot = (offset: number, size: number, slotFill: number) => {
   const chars = {
     filled: '▰',
     placeholder: '▱',
