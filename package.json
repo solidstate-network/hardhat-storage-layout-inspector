@@ -1,7 +1,6 @@
 {
   "name": "@solidstate/hardhat-storage-layout-diff",
   "version": "1.0.0",
-  "license": "MIT",
   "description": "Compare storage layouts between two contracts",
   "keywords": [
     "hardhat",
@@ -15,10 +14,15 @@
     "wow"
   ],
   "repository": "github:solidstate-network/hardhat-storage-layout-diff",
+  "license": "MIT",
   "author": "Nick Barry",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/src",
+    "src"
+  ],
   "scripts": {
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
@@ -26,12 +30,10 @@
     "prepare": "husky",
     "prettier": "prettier --write ."
   },
-  "files": [
-    "dist/src",
-    "src"
-  ],
-  "peerDependencies": {
-    "hardhat": "^3.0.0-next.6"
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -41,14 +43,13 @@
     "lint-staged": "^15.5.2",
     "patch-package": "^8.0.0",
     "prettier": "^3.5.3",
+    "prettier-plugin-packagejson": "^2.5.11",
     "prettier-plugin-solidity": "^2.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "dependencies": {
-    "chalk": "^5.4.1",
-    "cli-table3": "^0.6.5",
-    "simple-git": "^3.27.0"
+  "peerDependencies": {
+    "hardhat": "^3.0.0-next.6"
   },
   "publishConfig": {
     "access": "public"
