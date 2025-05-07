@@ -1,4 +1,11 @@
 import pkg from '../../package.json';
+import type {
+  StorageLayout,
+  CollatedSlot,
+  StorageElement,
+  MergedCollatedSlot,
+  MergedCollatedSlotEntry,
+} from '../types.js';
 import chalk from 'chalk';
 import Table from 'cli-table3';
 import { HardhatPluginError } from 'hardhat/plugins';
@@ -9,67 +16,6 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
-
-type StorageElement = {
-  contract: string;
-  label: string;
-  offset: number;
-  slot: string;
-  type: string;
-};
-
-type StorageType = {
-  encoding: 'inplace' | 'mapping' | 'dynamic_array';
-  label: string;
-  numberOfBytes: string;
-  // `base` is present on array types and represents the type of each array element
-  base?: string;
-  // `members` is present on struct types and is a list of component types
-  members?: StorageElement[];
-};
-
-type StorageTypes = {
-  [name: string]: StorageType;
-};
-
-type StorageLayout = {
-  storage: StorageElement[];
-  types: StorageTypes;
-};
-
-type CollatedSlotEntry = {
-  name: string;
-  size: number;
-  offset: number;
-  type: StorageType;
-};
-
-type CollatedSlot = {
-  id: bigint;
-  sizeReserved: number;
-  sizeFilled: number;
-  entries: CollatedSlotEntry[];
-};
-
-type MergedCollatedSlotEntry = {
-  nameA: string;
-  nameB: string;
-  sizeA: number;
-  sizeB: number;
-  offsetA: number;
-  offsetB: number;
-  typeA: StorageType;
-  typeB: StorageType;
-};
-
-type MergedCollatedSlot = {
-  id: bigint;
-  sizeReservedA: number;
-  sizeReservedB: number;
-  sizeFilledA: number;
-  sizeFilledB: number;
-  entries: MergedCollatedSlotEntry[];
-};
 
 export const visualizeSlot = (
   offset: number,
