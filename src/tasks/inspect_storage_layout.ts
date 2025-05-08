@@ -1,5 +1,6 @@
 import { TASK_INSPECT_STORAGE_LAYOUT } from '../task_names.js';
 import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
 
 export default task(TASK_INSPECT_STORAGE_LAYOUT)
   .addPositionalArgument({
@@ -9,7 +10,8 @@ export default task(TASK_INSPECT_STORAGE_LAYOUT)
   .addOption({
     name: 'ref',
     description: 'Git reference where contract is defined',
-    defaultValue: '',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
   .build();

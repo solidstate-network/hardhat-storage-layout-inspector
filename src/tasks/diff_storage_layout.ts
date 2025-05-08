@@ -1,5 +1,6 @@
 import { TASK_DIFF_STORAGE_LAYOUT } from '../task_names.js';
 import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
 
 export default task(TASK_DIFF_STORAGE_LAYOUT)
   .addPositionalArgument({
@@ -13,12 +14,14 @@ export default task(TASK_DIFF_STORAGE_LAYOUT)
   .addOption({
     name: 'aRef',
     description: 'Git reference where contract A is defined',
-    defaultValue: '',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .addOption({
     name: 'bRef',
     description: 'Git reference where contract B is defined',
-    defaultValue: '',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .setAction(import.meta.resolve('../actions/diff_storage_layout.js'))
   .build();
