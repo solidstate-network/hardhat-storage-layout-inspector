@@ -7,7 +7,7 @@ import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
   contract: string;
-  ref: string;
+  ref?: string;
 }
 
 const action: NewTaskActionFunction<

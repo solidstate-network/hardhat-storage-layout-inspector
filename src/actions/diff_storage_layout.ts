@@ -9,8 +9,8 @@ import { NewTaskActionFunction } from 'hardhat/types/tasks';
 interface DiffStorageLayoutTaskActionArguments {
   a: string;
   b: string;
-  aRef: string;
-  bRef: string;
+  aRef?: string;
+  bRef?: string;
 }
 
 const action: NewTaskActionFunction<
