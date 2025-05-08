@@ -13,9 +13,8 @@ interface DiffStorageLayoutTaskActionArguments {
   b: string;
   aRef?: string;
   bRef?: string;
+  noCompile: boolean;
 }
-
-// TODO: noCompile option
 
 const action: NewTaskActionFunction<
   DiffStorageLayoutTaskActionArguments
@@ -26,10 +25,12 @@ const action: NewTaskActionFunction<
   const hreRefB =
     bRef === aRef ? hreRefA : bRef ? await getTmpHreAtGitRef(hre, bRef) : hre;
 
-  await hreRefA.tasks.getTask(TASK_COMPILE).run();
+  if (!args.noCompile) {
+    await hreRefA.tasks.getTask(TASK_COMPILE).run();
 
-  if (aRef !== bRef) {
-    await hreRefB.tasks.getTask(TASK_COMPILE).run();
+    if (aRef !== bRef) {
+      await hreRefB.tasks.getTask(TASK_COMPILE).run();
+    }
   }
 
   const slotsA = collateStorageLayout(await loadStorageLayout(hreRefA, args.a));

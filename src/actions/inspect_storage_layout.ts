@@ -10,9 +10,8 @@ import { NewTaskActionFunction } from 'hardhat/types/tasks';
 interface InspectStorageLayoutTaskActionArguments {
   contract: string;
   ref?: string;
+  noCompile: boolean;
 }
-
-// TODO: noCompile option
 
 const action: NewTaskActionFunction<
   InspectStorageLayoutTaskActionArguments
@@ -22,7 +21,9 @@ const action: NewTaskActionFunction<
     hre = await getTmpHreAtGitRef(hre, args.ref);
   }
 
-  await hre.tasks.getTask(TASK_COMPILE).run();
+  if (!args.noCompile) {
+    await hre.tasks.getTask(TASK_COMPILE).run();
+  }
 
   const slots = collateStorageLayout(
     await loadStorageLayout(hre, args.contract),

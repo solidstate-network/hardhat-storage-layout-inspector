@@ -6,8 +6,17 @@ import { NewTaskActionFunction } from 'hardhat/types/tasks';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const action: NewTaskActionFunction = async (args, hre) => {
-  await hre.tasks.getTask(TASK_COMPILE).run();
+interface TaskActionArguments {
+  noCompile: boolean;
+}
+
+const action: NewTaskActionFunction<TaskActionArguments> = async (
+  args,
+  hre,
+) => {
+  if (!args.noCompile) {
+    await hre.tasks.getTask(TASK_COMPILE).run();
+  }
 
   const config = hre.config.storageLayoutDiff;
 

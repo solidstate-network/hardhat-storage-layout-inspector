@@ -23,5 +23,9 @@ export default task(TASK_DIFF_STORAGE_LAYOUT)
     defaultValue: undefined,
     type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
+  .addFlag({
+    name: 'noCompile',
+    description: "Don't compile before running this task",
+  })
   .setAction(import.meta.resolve('../actions/diff_storage_layout.js'))
   .build();
