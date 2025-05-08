@@ -16,7 +16,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
-const getTmpHreAtGitRef = async (
+export const getTmpHreAtGitRef = async (
   hre: Pick<HardhatRuntimeEnvironment, 'config'>,
   ref: string,
 ): Promise<HardhatRuntimeEnvironment> => {
@@ -78,23 +78,14 @@ const getTmpHreAtGitRef = async (
 export const loadStorageLayout = async (
   hre: HardhatRuntimeEnvironment,
   contractNameOrFullyQualifiedNameOrFile: string,
-  ref?: string,
 ): Promise<StorageLayout> => {
   if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
     return await getStorageLayoutFromFile(
       contractNameOrFullyQualifiedNameOrFile,
-      ref,
+      // TODO: fix file lookup with ref
+      // ref,
     );
   } else {
-    if (ref) {
-      // TODO: initialize hre with plugin or user config containing storageLayout output selection
-      const tmpHre = await getTmpHreAtGitRef(hre, ref);
-
-      await tmpHre.tasks.getTask(TASK_COMPILE).run();
-
-      hre = tmpHre;
-    }
-
     return await getStorageLayoutFromArtifact(
       hre,
       contractNameOrFullyQualifiedNameOrFile,

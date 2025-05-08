@@ -1,6 +1,7 @@
 import { printMergedCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
+  getTmpHreAtGitRef,
   loadStorageLayout,
   mergeCollatedSlots,
 } from '../lib/storage_layout_diff.js';
@@ -19,15 +20,20 @@ interface DiffStorageLayoutTaskActionArguments {
 const action: NewTaskActionFunction<
   DiffStorageLayoutTaskActionArguments
 > = async (args, hre) => {
-  await hre.tasks.getTask(TASK_COMPILE).run();
+  const { aRef, bRef } = args;
 
-  // TODO: check default values of ref parameters
-  const slotsA = collateStorageLayout(
-    await loadStorageLayout(hre, args.a, args.aRef),
-  );
-  const slotsB = collateStorageLayout(
-    await loadStorageLayout(hre, args.b, args.bRef),
-  );
+  const hreRefA = aRef ? await getTmpHreAtGitRef(hre, aRef) : hre;
+  const hreRefB =
+    bRef === aRef ? hreRefA : bRef ? await getTmpHreAtGitRef(hre, bRef) : hre;
+
+  await hreRefA.tasks.getTask(TASK_COMPILE).run();
+
+  if (aRef !== bRef) {
+    await hreRefB.tasks.getTask(TASK_COMPILE).run();
+  }
+
+  const slotsA = collateStorageLayout(await loadStorageLayout(hreRefA, args.a));
+  const slotsB = collateStorageLayout(await loadStorageLayout(hreRefB, args.b));
 
   const mergedSlots = mergeCollatedSlots(slotsA, slotsB);
 

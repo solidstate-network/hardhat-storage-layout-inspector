@@ -1,6 +1,7 @@
 import { printCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
+  getTmpHreAtGitRef,
   loadStorageLayout,
 } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
@@ -16,10 +17,15 @@ interface InspectStorageLayoutTaskActionArguments {
 const action: NewTaskActionFunction<
   InspectStorageLayoutTaskActionArguments
 > = async (args, hre) => {
+  if (args.ref) {
+    // TODO: initialize hre with plugin or user config containing storageLayout output selection
+    hre = await getTmpHreAtGitRef(hre, args.ref);
+  }
+
   await hre.tasks.getTask(TASK_COMPILE).run();
 
   const slots = collateStorageLayout(
-    await loadStorageLayout(hre, args.contract, args.ref),
+    await loadStorageLayout(hre, args.contract),
   );
 
   printCollatedSlots(slots);
