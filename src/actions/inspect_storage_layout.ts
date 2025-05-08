@@ -3,6 +3,7 @@ import {
   collateStorageLayout,
   loadStorageLayout,
 } from '../lib/storage_layout_diff.js';
+import { TASK_COMPILE } from '../task_names.js';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
@@ -10,11 +11,12 @@ interface InspectStorageLayoutTaskActionArguments {
   ref?: string;
 }
 
+// TODO: noCompile option
+
 const action: NewTaskActionFunction<
   InspectStorageLayoutTaskActionArguments
 > = async (args, hre) => {
-  // TODO: import task name constant
-  await hre.tasks.getTask('compile').run();
+  await hre.tasks.getTask(TASK_COMPILE).run();
 
   const slots = collateStorageLayout(
     await loadStorageLayout(hre, args.contract, args.ref),

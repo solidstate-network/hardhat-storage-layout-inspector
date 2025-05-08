@@ -1,4 +1,5 @@
 import pkg from '../../package.json';
+import { TASK_COMPILE } from '../task_names.js';
 import type {
   StorageLayout,
   CollatedSlot,
@@ -89,7 +90,7 @@ export const loadStorageLayout = async (
       // TODO: initialize hre with plugin or user config containing storageLayout output selection
       const tmpHre = await getTmpHreAtGitRef(hre, ref);
 
-      await tmpHre.tasks.getTask('compile').run();
+      await tmpHre.tasks.getTask(TASK_COMPILE).run();
 
       hre = tmpHre;
     }

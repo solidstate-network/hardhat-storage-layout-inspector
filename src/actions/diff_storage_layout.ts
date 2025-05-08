@@ -4,6 +4,7 @@ import {
   loadStorageLayout,
   mergeCollatedSlots,
 } from '../lib/storage_layout_diff.js';
+import { TASK_COMPILE } from '../task_names.js';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface DiffStorageLayoutTaskActionArguments {
@@ -13,11 +14,12 @@ interface DiffStorageLayoutTaskActionArguments {
   bRef?: string;
 }
 
+// TODO: noCompile option
+
 const action: NewTaskActionFunction<
   DiffStorageLayoutTaskActionArguments
 > = async (args, hre) => {
-  // TODO: import task name constant
-  await hre.tasks.getTask('compile').run();
+  await hre.tasks.getTask(TASK_COMPILE).run();
 
   // TODO: check default values of ref parameters
   const slotsA = collateStorageLayout(

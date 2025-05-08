@@ -1,13 +1,13 @@
 import pkg from '../../package.json';
 import { loadStorageLayout } from '../lib/storage_layout_diff.js';
+import { TASK_COMPILE } from '../task_names.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import { NewTaskActionFunction } from 'hardhat/types/tasks';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const action: NewTaskActionFunction = async (args, hre) => {
-  // TODO: import task name constant
-  await hre.tasks.getTask('compile').run();
+  await hre.tasks.getTask(TASK_COMPILE).run();
 
   const config = hre.config.storageLayoutDiff;
 
