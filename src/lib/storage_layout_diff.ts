@@ -16,13 +16,9 @@ import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
 const getTmpHreAtGitRef = async (
-  hre: HardhatRuntimeEnvironment,
-  ref?: string,
+  hre: Pick<HardhatRuntimeEnvironment, 'config'>,
+  ref: string,
 ): Promise<HardhatRuntimeEnvironment> => {
-  if (!ref) {
-    return hre;
-  }
-
   const git = simpleGit(hre.config.paths.root);
   ref = await git.revparse(ref);
 
@@ -89,13 +85,17 @@ export const loadStorageLayout = async (
       ref,
     );
   } else {
-    // TODO: initialize hre with plugin or user config containing storageLayout output selection
-    const tmpHre = await getTmpHreAtGitRef(hre, ref);
+    if (ref) {
+      // TODO: initialize hre with plugin or user config containing storageLayout output selection
+      const tmpHre = await getTmpHreAtGitRef(hre, ref);
 
-    await tmpHre.tasks.getTask('compile').run();
+      await tmpHre.tasks.getTask('compile').run();
+
+      hre = tmpHre;
+    }
 
     return await getStorageLayoutFromArtifact(
-      tmpHre,
+      hre,
       contractNameOrFullyQualifiedNameOrFile,
     );
   }
