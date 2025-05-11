@@ -21,17 +21,15 @@ const action: NewTaskActionFunction<
 > = async (args, hre) => {
   const { aRef, bRef } = args;
 
-  // TODO: npmInstall parameter
-
   const hreRefA = aRef
-    ? await createHardhatRuntimeEnvironmentAtGitRef(hre, aRef)
+    ? await createHardhatRuntimeEnvironmentAtGitRef(hre.config, aRef)
     : hre;
 
   const hreRefB =
     bRef === aRef
       ? hreRefA
       : bRef
-        ? await createHardhatRuntimeEnvironmentAtGitRef(hre, bRef)
+        ? await createHardhatRuntimeEnvironmentAtGitRef(hre.config, bRef)
         : hre;
 
   if (!args.noCompile) {

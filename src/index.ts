@@ -8,6 +8,12 @@ import type { HardhatPlugin } from 'hardhat/types/plugins';
 const plugin: HardhatPlugin = {
   id: pkg.name,
   npmPackage: pkg.name,
+  dependencies: [
+    async () => {
+      const { default: HardhatGit } = await import('@solidstate/hardhat-git');
+      return HardhatGit;
+    },
+  ],
   tasks: [
     taskDiffStorageLayout,
     taskExportStorageLayout,

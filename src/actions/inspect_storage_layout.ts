@@ -18,8 +18,7 @@ const action: NewTaskActionFunction<
 > = async (args, hre) => {
   if (args.ref) {
     // TODO: initialize hre with plugin or user config containing storageLayout output selection
-    // TODO: npmInstall parameter
-    hre = await createHardhatRuntimeEnvironmentAtGitRef(hre, args.ref);
+    hre = await createHardhatRuntimeEnvironmentAtGitRef(hre.config, args.ref);
   }
 
   if (!args.noCompile) {

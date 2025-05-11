@@ -40,6 +40,8 @@ Add configuration under the `storageLayoutDiff` key:
 | `except`  | `Array` of `String` matchers used to exclude contracts                                                     | `[]`                                                           |
 | `spacing` | number of spaces per indentation level of formatted output                                                 | `2`                                                            |
 
+Additional configuration options are provided by [`@solidstate/hardhat-git`](https://www.npmjs.com/package/@solidstate/hardhat-git), which is included as a dependency.
+
 Export storage layouts:
 
 ```bash
