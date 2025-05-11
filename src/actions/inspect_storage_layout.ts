@@ -5,7 +5,7 @@ import {
 } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
 import { createHardhatRuntimeEnvironmentAtGitRef } from '@solidstate/hardhat-git';
-import { NewTaskActionFunction } from 'hardhat/types/tasks';
+import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
   contract: string;
