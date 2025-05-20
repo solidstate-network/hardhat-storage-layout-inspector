@@ -9,7 +9,7 @@ Inspect and compare Solidity smart contract storage layouts.
 ```bash
 npm install --save-dev @solidstate/hardhat-storage-layout-diff
 # or
-yarn add --dev @solidstate/hardhat-storage-layout-diff
+pnpm add -D @solidstate/hardhat-storage-layout-diff
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ Export storage layouts:
 ```bash
 npx hardhat export-storage-layout
 # or
-yarn run hardhat export-storage-layout
+pnpm hardhat export-storage-layout
 ```
 
 Inspect a contract's storage layout:
@@ -55,7 +55,7 @@ Inspect a contract's storage layout:
 ```bash
 npx hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
 # or
-yarn run hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
+pnpm hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
 ```
 
 Compare two contracts:
@@ -63,7 +63,7 @@ Compare two contracts:
 ```bash
 npx hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 # or
-yarn run hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
+pnpm hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 ```
 
 A contract identifier may be a name, a fully qualified name, or a path to a JSON file containing a storage layout.
@@ -72,14 +72,14 @@ Include the optional git ref options to look up a contract identifier at a parti
 
 ## Development
 
-Install dependencies via Yarn:
+Install dependencies via pnpm:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Setup Husky to format code on commit:
 
 ```bash
-yarn prepare
+pnpm prepare
 ```
