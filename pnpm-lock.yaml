@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@nomicfoundation/hardhat-utils':
+        specifier: ^3.0.0-next.11
+        version: 3.0.0-next.11
       '@solidstate/hardhat-git':
         specifier: ^1.0.0-next.3
         version: 1.0.0-next.3(hardhat@3.0.0-next.8)
@@ -371,8 +374,8 @@ packages:
   '@nomicfoundation/hardhat-errors@3.0.0-next.8':
     resolution: {integrity: sha512-DFA0ke/fhx7d/bTz0i0nW1fSBvun9azR23dv04D/YSUC6R4ZwB2CCIjlh79Qifx9yeVXPdCub3PaDmqNMoTF4g==}
 
-  '@nomicfoundation/hardhat-utils@3.0.0-next.8':
-    resolution: {integrity: sha512-zewxggcKRHr9wQ2UkhoCNRdu01DnH17vaDMYtdAB2o/qJmDFtPYTT2mIuK/UMQ5qRhN1Py57IFR3dU4MaWkNfA==}
+  '@nomicfoundation/hardhat-utils@3.0.0-next.11':
+    resolution: {integrity: sha512-syTQ8mi6O78PJow9NkIvzjEmv6PyMS+bfb4torAIMOIe8sj0sWXKK2ceWwvvOVhcWSzDsyTQaRsoyV8qwTZDCA==}
 
   '@nomicfoundation/hardhat-zod-utils@3.0.0-next.8':
     resolution: {integrity: sha512-nIWL4Sr8vYxVisG2OHuEGPAz1pXo/dG9xFNs4OjFYfUG0Qab2Y6cdgAK6gFn2/EL0CMZFwUVPZrE04En7L1Y8w==}
@@ -1573,11 +1576,11 @@ snapshots:
 
   '@nomicfoundation/hardhat-errors@3.0.0-next.8':
     dependencies:
-      '@nomicfoundation/hardhat-utils': 3.0.0-next.8
+      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
     transitivePeerDependencies:
       - supports-color
 
-  '@nomicfoundation/hardhat-utils@3.0.0-next.8':
+  '@nomicfoundation/hardhat-utils@3.0.0-next.11':
     dependencies:
       '@streamparser/json-node': 0.0.22
       debug: 4.4.1
@@ -1592,7 +1595,7 @@ snapshots:
 
   '@nomicfoundation/hardhat-zod-utils@3.0.0-next.8(zod@3.25.7)':
     dependencies:
-      '@nomicfoundation/hardhat-utils': 3.0.0-next.8
+      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
       zod: 3.25.7
     transitivePeerDependencies:
       - supports-color
@@ -2222,7 +2225,7 @@ snapshots:
       '@ignored/edr': 0.10.0-alpha.3
       '@ignored/edr-optimism': 0.13.0-alpha.1
       '@nomicfoundation/hardhat-errors': 3.0.0-next.8
-      '@nomicfoundation/hardhat-utils': 3.0.0-next.8
+      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
       '@nomicfoundation/hardhat-zod-utils': 3.0.0-next.8(zod@3.25.7)
       '@nomicfoundation/solidity-analyzer': 0.1.2
       '@sentry/core': 9.22.0

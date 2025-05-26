@@ -7,6 +7,7 @@ import type {
   MergedCollatedSlotEntry,
 } from '../types.js';
 import { validateStorageLayout } from './validation.js';
+import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
@@ -38,15 +39,7 @@ const getStorageLayoutFromFile = async (
   // user path as-is if absolute
   const filePath = path.resolve(hre.config.paths.root, fileName);
 
-  let contents;
-
-  try {
-    contents = await fs.promises.readFile(filePath, 'utf-8');
-  } catch (error) {
-    throw new HardhatPluginError(pkg.name, error as string);
-  }
-
-  const storageLayout = JSON.parse(contents);
+  const storageLayout = (await readJsonFile(filePath)) as any;
 
   validateStorageLayout(storageLayout, filePath);
 
@@ -70,13 +63,13 @@ const getStorageLayoutFromArtifact = async (
   );
 
   if (!buildInfo) {
-    throw new HardhatPluginError(pkg.name, `contract not found`);
+    throw new HardhatPluginError(pkg.name, 'contract not found');
   }
 
   const { sourceName, contractName } = artifact;
 
-  const storageLayout: StorageLayout =
-    buildInfo.output.contracts[sourceName][contractName].storageLayout;
+  const { storageLayout } =
+    buildInfo.output.contracts[sourceName][contractName];
 
   validateStorageLayout(storageLayout, contractNameOrFullyQualifiedName);
 

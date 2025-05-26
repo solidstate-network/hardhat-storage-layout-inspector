@@ -18,6 +18,7 @@ export const validateStorageLayout = (
 };
 
 const isValidStorageLayout = (storageLayout: StorageLayout): boolean => {
+  // Note: this validates object structure but not contents
   try {
     assert(isValidStorage(storageLayout.storage));
     assert(isValidTypes(storageLayout.types));
