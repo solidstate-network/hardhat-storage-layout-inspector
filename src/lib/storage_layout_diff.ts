@@ -6,6 +6,7 @@ import type {
   MergedCollatedSlot,
   MergedCollatedSlotEntry,
 } from '../types.js';
+import { validateStorageLayout } from './validation.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
@@ -37,13 +38,19 @@ const getStorageLayoutFromFile = async (
   // user path as-is if absolute
   const filePath = path.resolve(hre.config.paths.root, fileName);
 
+  let contents;
+
   try {
-    const contents = await fs.promises.readFile(filePath, 'utf-8');
-    // TODO: validate that JSON is a StorageLayout
-    return JSON.parse(contents);
+    contents = await fs.promises.readFile(filePath, 'utf-8');
   } catch (error) {
     throw new HardhatPluginError(pkg.name, error as string);
   }
+
+  const storageLayout = JSON.parse(contents);
+
+  validateStorageLayout(storageLayout, filePath);
+
+  return storageLayout;
 };
 
 const getStorageLayoutFromArtifact = async (
@@ -68,9 +75,12 @@ const getStorageLayoutFromArtifact = async (
 
   const { sourceName, contractName } = artifact;
 
-  // TODO: validate that JSON contains a StorageLayout
-  return (buildInfo.output.contracts[sourceName][contractName] as any)
-    .storageLayout;
+  const storageLayout: StorageLayout =
+    buildInfo.output.contracts[sourceName][contractName].storageLayout;
+
+  validateStorageLayout(storageLayout, contractNameOrFullyQualifiedName);
+
+  return storageLayout;
 };
 
 export const collateStorageLayout = (
