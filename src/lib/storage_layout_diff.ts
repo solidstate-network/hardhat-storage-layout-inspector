@@ -11,17 +11,15 @@ import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
-import { simpleGit } from 'simple-git';
 
 export const loadStorageLayout = async (
-  hre: HardhatRuntimeEnvironment,
+  hre: Pick<HardhatRuntimeEnvironment, 'artifacts' | 'config'>,
   contractNameOrFullyQualifiedNameOrFile: string,
 ): Promise<StorageLayout> => {
   if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
     return await getStorageLayoutFromFile(
+      hre,
       contractNameOrFullyQualifiedNameOrFile,
-      // TODO: fix file lookup with ref
-      // ref,
     );
   } else {
     return await getStorageLayoutFromArtifact(
@@ -32,29 +30,24 @@ export const loadStorageLayout = async (
 };
 
 const getStorageLayoutFromFile = async (
+  hre: Pick<HardhatRuntimeEnvironment, 'config'>,
   fileName: string,
-  ref?: string,
 ): Promise<StorageLayout> => {
-  let contents;
+  // resolve relative path with respect to hardhat project root
+  // user path as-is if absolute
+  const filePath = path.resolve(hre.config.paths.root, fileName);
 
   try {
-    if (ref) {
-      // TODO: cwd
-      const git = simpleGit();
-      contents = await git.show(`${ref}:${fileName}`);
-    } else {
-      contents = await fs.promises.readFile(fileName, 'utf-8');
-    }
+    const contents = await fs.promises.readFile(filePath, 'utf-8');
+    // TODO: validate that JSON is a StorageLayout
+    return JSON.parse(contents);
   } catch (error) {
     throw new HardhatPluginError(pkg.name, error as string);
   }
-
-  // TODO: validate that JSON is a StorageLayout
-  return JSON.parse(contents);
 };
 
 const getStorageLayoutFromArtifact = async (
-  hre: HardhatRuntimeEnvironment,
+  hre: Pick<HardhatRuntimeEnvironment, 'artifacts'>,
   contractNameOrFullyQualifiedName: string,
 ): Promise<StorageLayout> => {
   const artifact = await hre.artifacts.readArtifact(
