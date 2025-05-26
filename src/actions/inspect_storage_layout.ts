@@ -18,9 +18,7 @@ const action: NewTaskActionFunction<
 > = async (args, hre) => {
   if (args.ref) {
     hre = await prepareHardhatRuntimeEnvironment(hre.config, args.ref);
-  }
-
-  if (!args.noCompile) {
+  } else if (!args.noCompile) {
     await hre.tasks.getTask(TASK_COMPILE).run();
   }
 

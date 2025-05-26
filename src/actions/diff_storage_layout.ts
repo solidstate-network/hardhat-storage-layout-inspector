@@ -32,12 +32,8 @@ const action: NewTaskActionFunction<
         ? await prepareHardhatRuntimeEnvironment(hre.config, bRef)
         : hre;
 
-  if (!args.noCompile) {
-    await hreRefA.tasks.getTask(TASK_COMPILE).run();
-
-    if (aRef !== bRef) {
-      await hreRefB.tasks.getTask(TASK_COMPILE).run();
-    }
+  if (!args.noCompile && (hreRefA === hre || hreRefB === hre)) {
+    await hre.tasks.getTask(TASK_COMPILE).run();
   }
 
   const slotsA = collateStorageLayout(await loadStorageLayout(hreRefA, args.a));

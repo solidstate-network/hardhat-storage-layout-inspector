@@ -15,7 +15,8 @@ export default task(TASK_INSPECT_STORAGE_LAYOUT)
   })
   .addFlag({
     name: 'noCompile',
-    description: "Don't compile before running this task",
+    description:
+      'Do not compile before running this task (not applicable to HREs corresponding to git references)',
   })
   .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
   .build();

@@ -1,4 +1,5 @@
 import pkg from '../../package.json';
+import { TASK_COMPILE } from '../task_names.js';
 import { createHardhatRuntimeEnvironmentAtGitRef } from '@solidstate/hardhat-git';
 import type { HardhatConfig } from 'hardhat/types/config';
 import type { HardhatPlugin } from 'hardhat/types/plugins';
@@ -19,6 +20,8 @@ export const prepareHardhatRuntimeEnvironment = async (
   const hre = await createHardhatRuntimeEnvironmentAtGitRef(originConfig, ref, [
     plugin,
   ]);
+
+  await hre.tasks.getTask(TASK_COMPILE).run();
 
   return hre;
 };
