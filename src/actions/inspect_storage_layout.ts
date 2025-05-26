@@ -1,10 +1,10 @@
+import { prepareHardhatRuntimeEnvironment } from '../lib/hre.js';
 import { printCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
   loadStorageLayout,
 } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
-import { createHardhatRuntimeEnvironmentAtGitRef } from '@solidstate/hardhat-git';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
@@ -17,8 +17,7 @@ const action: NewTaskActionFunction<
   InspectStorageLayoutTaskActionArguments
 > = async (args, hre) => {
   if (args.ref) {
-    // TODO: initialize hre with plugin or user config containing storageLayout output selection
-    hre = await createHardhatRuntimeEnvironmentAtGitRef(hre.config, args.ref);
+    hre = await prepareHardhatRuntimeEnvironment(hre.config, args.ref);
   }
 
   if (!args.noCompile) {

@@ -1,3 +1,4 @@
+import { prepareHardhatRuntimeEnvironment } from '../lib/hre.js';
 import { printMergedCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
@@ -5,7 +6,6 @@ import {
   mergeCollatedSlots,
 } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
-import { createHardhatRuntimeEnvironmentAtGitRef } from '@solidstate/hardhat-git';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface DiffStorageLayoutTaskActionArguments {
@@ -22,14 +22,14 @@ const action: NewTaskActionFunction<
   const { aRef, bRef } = args;
 
   const hreRefA = aRef
-    ? await createHardhatRuntimeEnvironmentAtGitRef(hre.config, aRef)
+    ? await prepareHardhatRuntimeEnvironment(hre.config, aRef)
     : hre;
 
   const hreRefB =
     bRef === aRef
       ? hreRefA
       : bRef
-        ? await createHardhatRuntimeEnvironmentAtGitRef(hre.config, bRef)
+        ? await prepareHardhatRuntimeEnvironment(hre.config, bRef)
         : hre;
 
   if (!args.noCompile) {
