@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@solidstate/hardhat-git':
-        specifier: ^1.0.0-next.4
-        version: 1.0.0-next.4(hardhat@3.0.0-next.11)
+        specifier: ^1.0.0-next.5
+        version: 1.0.0-next.5(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0-next.11)
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
@@ -713,9 +713,10 @@ packages:
   '@solidity-parser/parser@0.20.1':
     resolution: {integrity: sha512-58I2sRpzaQUN+jJmWbHfbWf9AKfzqCI8JAdFB0vbyY+u8tBRcuTt9LxzasvR0LGQpcRv97eyV7l61FQ3Ib7zVw==}
 
-  '@solidstate/hardhat-git@1.0.0-next.4':
-    resolution: {integrity: sha512-cme45ga1IBbzQui7X8X2Ph2Mi2Yd9t0qFOLLElwoj9zbot8OG3REg3sv7pFHYZwArTVgSWcoZpR07Pbe4q8Q2A==}
+  '@solidstate/hardhat-git@1.0.0-next.5':
+    resolution: {integrity: sha512-PurB2VLJpl0O4cJdvpIC6BXXaT5GYWs4bbKalbC6YgbG9zY5i5gTe5Mt4cQDyNBpXabWGamT4lh22zClqWF1Sw==}
     peerDependencies:
+      '@nomicfoundation/hardhat-utils': ^3.0.0-next.11
       hardhat: ^3.0.0-next.6
 
   '@streamparser/json-node@0.0.22':
@@ -1999,8 +2000,9 @@ snapshots:
 
   '@solidity-parser/parser@0.20.1': {}
 
-  '@solidstate/hardhat-git@1.0.0-next.4(hardhat@3.0.0-next.11)':
+  '@solidstate/hardhat-git@1.0.0-next.5(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0-next.11)':
     dependencies:
+      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
       chalk: 5.4.1
       cli-table3: 0.6.5
       env-paths: 3.0.0
