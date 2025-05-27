@@ -12,21 +12,21 @@ export default task(TASK_DIFF_STORAGE_LAYOUT)
     description: 'Second contract whose storage layout to inspect',
   })
   .addOption({
-    name: 'aRef',
-    description: 'Git reference where contract A is defined',
+    name: 'aRev',
+    description: 'Git revision where contract A is defined',
     defaultValue: undefined,
     type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .addOption({
-    name: 'bRef',
-    description: 'Git reference where contract B is defined',
+    name: 'bRev',
+    description: 'Git revision where contract B is defined',
     defaultValue: undefined,
     type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .addFlag({
     name: 'noCompile',
     description:
-      'Do not compile before running this task (not applicable to HREs corresponding to git references)',
+      'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
   .setAction(import.meta.resolve('../actions/diff_storage_layout.js'))
   .build();

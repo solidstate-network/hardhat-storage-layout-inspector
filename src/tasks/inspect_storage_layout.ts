@@ -8,15 +8,15 @@ export default task(TASK_INSPECT_STORAGE_LAYOUT)
     description: 'Contract whose storage layout to inspect',
   })
   .addOption({
-    name: 'ref',
-    description: 'Git reference where contract is defined',
+    name: 'rev',
+    description: 'Git revision where contract is defined',
     defaultValue: undefined,
     type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .addFlag({
     name: 'noCompile',
     description:
-      'Do not compile before running this task (not applicable to HREs corresponding to git references)',
+      'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
   .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
   .build();

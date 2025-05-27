@@ -11,33 +11,33 @@ import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 interface DiffStorageLayoutTaskActionArguments {
   a: string;
   b: string;
-  aRef?: string;
-  bRef?: string;
+  aRev?: string;
+  bRev?: string;
   noCompile: boolean;
 }
 
 const action: NewTaskActionFunction<
   DiffStorageLayoutTaskActionArguments
 > = async (args, hre) => {
-  const { aRef, bRef } = args;
+  const { aRev, bRev } = args;
 
-  const hreRefA = aRef
-    ? await prepareHardhatRuntimeEnvironment(hre.config, aRef)
+  const hreRevA = aRev
+    ? await prepareHardhatRuntimeEnvironment(hre.config, aRev)
     : hre;
 
-  const hreRefB =
-    bRef === aRef
-      ? hreRefA
-      : bRef
-        ? await prepareHardhatRuntimeEnvironment(hre.config, bRef)
+  const hreRevB =
+    bRev === aRev
+      ? hreRevA
+      : bRev
+        ? await prepareHardhatRuntimeEnvironment(hre.config, bRev)
         : hre;
 
-  if (!args.noCompile && (hreRefA === hre || hreRefB === hre)) {
+  if (!args.noCompile && (hreRevA === hre || hreRevB === hre)) {
     await hre.tasks.getTask(TASK_COMPILE).run();
   }
 
-  const slotsA = collateStorageLayout(await loadStorageLayout(hreRefA, args.a));
-  const slotsB = collateStorageLayout(await loadStorageLayout(hreRefB, args.b));
+  const slotsA = collateStorageLayout(await loadStorageLayout(hreRevA, args.a));
+  const slotsB = collateStorageLayout(await loadStorageLayout(hreRevB, args.b));
 
   const mergedSlots = mergeCollatedSlots(slotsA, slotsB);
 

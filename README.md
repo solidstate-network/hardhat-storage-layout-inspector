@@ -68,7 +68,7 @@ pnpm hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 
 A contract identifier may be a name, a fully qualified name, or a path to a JSON file containing a storage layout.
 
-Include the optional git ref options to look up a contract identifier at a particular git reference.
+Include the optional git rev options to look up a contract identifier at a particular git revision.
 
 ## Development
 

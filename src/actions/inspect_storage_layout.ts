@@ -9,15 +9,15 @@ import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface InspectStorageLayoutTaskActionArguments {
   contract: string;
-  ref?: string;
+  rev?: string;
   noCompile: boolean;
 }
 
 const action: NewTaskActionFunction<
   InspectStorageLayoutTaskActionArguments
 > = async (args, hre) => {
-  if (args.ref) {
-    hre = await prepareHardhatRuntimeEnvironment(hre.config, args.ref);
+  if (args.rev) {
+    hre = await prepareHardhatRuntimeEnvironment(hre.config, args.rev);
   } else if (!args.noCompile) {
     await hre.tasks.getTask(TASK_COMPILE).run();
   }
