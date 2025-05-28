@@ -11,7 +11,6 @@ import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
-import fs from 'node:fs';
 import path from 'node:path';
 
 export const loadStorageLayout = async (
@@ -58,9 +57,7 @@ const getStorageLayoutFromArtifact = async (
     artifact.buildInfoId!,
   );
 
-  const buildInfo = JSON.parse(
-    await fs.promises.readFile(buildInfoPath!, 'utf-8'),
-  );
+  const buildInfo = (await readJsonFile(buildInfoPath!)) as any;
 
   if (!buildInfo) {
     throw new HardhatPluginError(pkg.name, 'contract not found');
