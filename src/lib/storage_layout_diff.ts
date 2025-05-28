@@ -51,13 +51,13 @@ const getStorageLayoutFromArtifact = async (
     contractNameOrFullyQualifiedName,
   );
 
+  const { buildInfoId, sourceName, contractName } = artifact;
+
   const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
-    artifact.buildInfoId!,
+    buildInfoId!,
   );
 
   const buildInfo = (await readJsonFile(buildInfoPath!)) as any;
-
-  const { sourceName, contractName } = artifact;
 
   const { storageLayout } =
     buildInfo.output.contracts[sourceName][contractName];
