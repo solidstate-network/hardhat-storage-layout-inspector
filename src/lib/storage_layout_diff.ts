@@ -1,4 +1,3 @@
-import pkg from '../../package.json';
 import type {
   StorageLayout,
   CollatedSlot,
@@ -8,7 +7,6 @@ import type {
 } from '../types.js';
 import { validateStorageLayout } from './validation.js';
 import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
-import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import assert from 'node:assert';
 import path from 'node:path';
@@ -58,10 +56,6 @@ const getStorageLayoutFromArtifact = async (
   );
 
   const buildInfo = (await readJsonFile(buildInfoPath!)) as any;
-
-  if (!buildInfo) {
-    throw new HardhatPluginError(pkg.name, 'contract not found');
-  }
 
   const { sourceName, contractName } = artifact;
 
