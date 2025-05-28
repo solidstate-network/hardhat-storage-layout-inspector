@@ -147,9 +147,6 @@ export const mergeCollatedSlots = (
   slotsA: CollatedSlot[],
   slotsB: CollatedSlot[],
 ): MergedCollatedSlot[] => {
-  // TODO: support starting from slot > 0
-  // TODO: must use bigint or string for custom layouts
-
   // TODO: support different lengths
   assert.equal(slotsA.length, slotsB.length);
 
