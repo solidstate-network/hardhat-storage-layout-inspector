@@ -51,8 +51,8 @@ export type CollatedSlot = {
 };
 
 export type MergedCollatedSlotEntry = {
-  nameA: string;
-  nameB: string;
+  nameA?: string;
+  nameB?: string;
   sizeA: number;
   sizeB: number;
   offsetA: number;

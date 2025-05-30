@@ -108,10 +108,13 @@ export const printMergedCollatedSlots = (slots: MergedCollatedSlot[]) => {
         offset = `${chalk.red(entry.offsetA)} => ${chalk.green(entry.offsetB)}`;
       }
 
-      if (entry.nameA === entry.nameB) {
-        name = entry.nameA;
+      const nameA = entry.nameA ?? '<empty>';
+      const nameB = entry.nameB ?? '<empty>';
+
+      if (nameA === nameB) {
+        name = nameA;
       } else {
-        name = `${chalk.red(entry.nameA)} => ${chalk.green(entry.nameB)}`;
+        name = `${chalk.red(nameA)} => ${chalk.green(nameB)}`;
       }
 
       if (entry.typeA.label === entry.typeB.label) {

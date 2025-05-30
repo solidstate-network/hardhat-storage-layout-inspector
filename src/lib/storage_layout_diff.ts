@@ -162,30 +162,34 @@ export const mergeCollatedStorageLayouts = (
 
   // TODO: handle non-zero slot indexes
   for (let i = 0; i < slotsA.length; i++) {
+    type Entry = Omit<CollatedSlotEntry, 'name'>;
+
     const slotA = slotsA[i];
     const slotB = slotsB[i];
+    const slotAEntries: Entry[] = slotA.entries;
+    const slotBEntries: Entry[] = slotB.entries;
 
-    const tail: CollatedSlotEntry[] = [
-      ...slotA.entries.slice(slotB.entries.length),
-      ...slotB.entries.slice(slotA.entries.length),
-    ].map((entry) => ({ ...entry, name: '<empty>', size: 0 }));
+    const tail: Entry[] = [
+      ...slotAEntries.slice(slotBEntries.length),
+      ...slotBEntries.slice(slotAEntries.length),
+    ].map((entry) => ({ size: 0, offset: entry.offset, type: entry.type }));
 
-    if (slotA.entries.length > slotB.entries.length) {
-      slotB.entries.push(...tail);
-    } else if (slotB.entries.length > slotA.entries.length) {
-      slotA.entries.push(...tail);
+    if (slotAEntries.length > slotBEntries.length) {
+      slotBEntries.push(...tail);
+    } else if (slotBEntries.length > slotAEntries.length) {
+      slotAEntries.push(...tail);
     }
 
     const mergedEntries: MergedCollatedSlotEntry[] = [];
 
     let entryIndexA = 0;
     let entryIndexB = 0;
-    let entryA: CollatedSlotEntry;
-    let entryB: CollatedSlotEntry;
+    let entryA: Entry;
+    let entryB: Entry;
 
     while (
-      (entryA = slotA.entries[entryIndexA]) &&
-      (entryB = slotB.entries[entryIndexB])
+      (entryA = slotAEntries[entryIndexA]) &&
+      (entryB = slotBEntries[entryIndexB])
     ) {
       const mergedEntry: MergedCollatedSlotEntry = {
         nameA: entryA.name,
