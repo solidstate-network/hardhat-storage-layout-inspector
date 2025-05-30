@@ -31,7 +31,7 @@
     "clean": "tsc --build --clean",
     "prepare": "husky",
     "prettier": "prettier --write .",
-    "test": "pnpm build && tsx --test"
+    "test": "pnpm build && hardhat compile && tsx --test"
   },
   "dependencies": {
     "@solidstate/hardhat-git": "^1.0.0-next.5",
