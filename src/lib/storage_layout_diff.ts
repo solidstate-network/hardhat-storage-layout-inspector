@@ -4,6 +4,7 @@ import type {
   StorageElement,
   MergedCollatedSlot,
   MergedCollatedSlotEntry,
+  CollatedSlotEntry,
 } from '../types.js';
 import { validateStorageLayout } from './validation.js';
 import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
@@ -156,14 +157,23 @@ export const mergeCollatedStorageLayouts = (
     const slotA = slotsA[i];
     const slotB = slotsB[i];
 
-    assert.equal(slotA.id, slotB.id);
+    const tail: CollatedSlotEntry[] = [
+      ...slotA.entries.slice(slotB.entries.length),
+      ...slotB.entries.slice(slotA.entries.length),
+    ].map((entry) => ({ ...entry, name: '<empty>', size: 0 }));
+
+    if (slotA.entries.length > slotB.entries.length) {
+      slotB.entries.push(...tail);
+    } else if (slotB.entries.length > slotA.entries.length) {
+      slotA.entries.push(...tail);
+    }
 
     const mergedEntries: MergedCollatedSlotEntry[] = [];
 
     let entryIndexA = 0;
     let entryIndexB = 0;
-    let entryA;
-    let entryB;
+    let entryA: CollatedSlotEntry;
+    let entryB: CollatedSlotEntry;
 
     while (
       (entryA = slotA.entries[entryIndexA]) &&
@@ -188,8 +198,6 @@ export const mergeCollatedStorageLayouts = (
       if (endA <= endB) entryIndexA++;
       if (endB <= endA) entryIndexB++;
     }
-
-    // TODO: add tail entries
 
     output.push({
       id: slotA.id,

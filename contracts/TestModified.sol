@@ -15,5 +15,5 @@ contract TestModified {
     // slots 7-8
     bool[4][2] nestedArray;
     // slot 9
-    uint256 u;
+    // uint256 u;
 }

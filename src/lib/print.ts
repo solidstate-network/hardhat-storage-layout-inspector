@@ -142,7 +142,7 @@ export const printMergedCollatedSlots = (slots: MergedCollatedSlot[]) => {
             return charA === '▰' ? chalk.magenta(charA) : charA;
           } else if (charA === '▰' || charB === '▰') {
             // one char is filled, and it doesn't matter whether the other is a placeholder or empty
-            return chalk.red('▰');
+            return charA === '▰' ? chalk.red('▰') : chalk.green('▰');
           } else {
             // chars differ and neither is filled, so one is a placeholder and one is empty
             return '▱';
