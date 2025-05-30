@@ -7,7 +7,7 @@ contract TestModified {
     // slots 0-1
     S str;
     // slot 2
-    mapping(address => bool) map;
+    mapping(address => bool) map_renamed;
     // slots 3-5
     bytes16[5] array;
     // slot 6
