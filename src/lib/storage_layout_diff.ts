@@ -81,8 +81,8 @@ export const collateStorageLayout = (
 
     if (!slot) {
       // create a new slot if none exist
-      // TODO: custom layout feature allows first slot to be > 0
-      slot = { id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] };
+      const layoutOffset = BigInt(storageLayout.storage[0].slot);
+      slot = { id: layoutOffset, sizeReserved: 0, sizeFilled: 0, entries: [] };
       slots.push(slot);
     } else if (Number(type.numberOfBytes) + slot.sizeReserved > 32) {
       // create a new slot if current element doesn't fit
