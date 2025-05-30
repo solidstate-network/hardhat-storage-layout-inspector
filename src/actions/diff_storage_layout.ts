@@ -3,7 +3,7 @@ import { printMergedCollatedSlots } from '../lib/print.js';
 import {
   collateStorageLayout,
   loadStorageLayout,
-  mergeCollatedSlots,
+  mergeCollatedStorageLayouts,
 } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
@@ -39,7 +39,7 @@ const action: NewTaskActionFunction<
   const slotsA = collateStorageLayout(await loadStorageLayout(hreRevA, args.a));
   const slotsB = collateStorageLayout(await loadStorageLayout(hreRevB, args.b));
 
-  const mergedSlots = mergeCollatedSlots(slotsA, slotsB);
+  const mergedSlots = mergeCollatedStorageLayouts(slotsA, slotsB);
 
   printMergedCollatedSlots(mergedSlots);
 };

@@ -143,7 +143,7 @@ export const collateStorageLayout = (
   return storage.reduce(reducer, []);
 };
 
-export const mergeCollatedSlots = (
+export const mergeCollatedStorageLayouts = (
   slotsA: CollatedSlot[],
   slotsB: CollatedSlot[],
 ): MergedCollatedSlot[] => {
