@@ -76,7 +76,8 @@ export const collateStorageLayout = (
   type Element = Pick<StorageElement, 'type' | 'label'>;
 
   const reducer = (slots: CollatedSlot[], element: Element) => {
-    const type = types[element.type];
+    // types will only be null if the storage array is empty
+    const type = types![element.type];
 
     let slot = slots[slots.length - 1];
 
@@ -150,11 +151,10 @@ export const mergeCollatedStorageLayouts = (
 ): MergedCollatedSlot[] => {
   const output: MergedCollatedSlot[] = [];
 
-  // TODO: this will break if either array is empty
-  const firstIdA = slotsA[0].id;
-  const firstIdB = slotsB[0].id;
-  const lastIdA = slotsA[slotsA.length - 1].id;
-  const lastIdB = slotsB[slotsB.length - 1].id;
+  const firstIdA = slotsA[0]?.id ?? -0n;
+  const firstIdB = slotsB[0]?.id ?? -0n;
+  const lastIdA = slotsA[slotsA.length - 1]?.id ?? -1n;
+  const lastIdB = slotsB[slotsB.length - 1]?.id ?? -1n;
 
   const emptySlot = { id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] };
 

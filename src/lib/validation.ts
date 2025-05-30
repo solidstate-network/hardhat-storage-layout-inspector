@@ -54,6 +54,10 @@ const isValidStorageElement = (storageElement: StorageElement): boolean => {
 };
 
 const isValidTypes = (storageTypes: StorageTypes): boolean => {
+  if (storageTypes === null) {
+    return true;
+  }
+
   try {
     assert(Object.values(storageTypes).every((el) => isValidStorageType(el)));
   } catch (error) {

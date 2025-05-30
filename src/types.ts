@@ -29,7 +29,7 @@ export type StorageType = {
 
 export type StorageTypes = {
   [name: string]: StorageType;
-};
+} | null;
 
 export type StorageLayout = {
   storage: StorageElement[];
