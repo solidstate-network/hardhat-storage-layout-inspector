@@ -3,7 +3,7 @@ pragma solidity *;
 
 import { E, S } from './Types.sol';
 
-contract TestModified {
+contract TestModified layout at 1 {
     // slots 0-1
     S str;
     // slot 2
