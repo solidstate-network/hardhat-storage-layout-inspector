@@ -121,12 +121,17 @@ export const printMergedCollatedSlots = (slots: MergedCollatedSlot[]) => {
         name = `${chalk.red(nameA)} => ${chalk.green(nameB)}`;
       }
 
-      if (entry.typeA.label === entry.typeB.label) {
-        type = entry.typeA.label;
-      } else if (entry.typeA.numberOfBytes === entry.typeB.numberOfBytes) {
-        type = `${chalk.red(entry.typeA.label)} => ${chalk.green(entry.typeB.label)}`;
+      const typeLabelA = entry.typeA?.label;
+      const typeLabelB = entry.typeB?.label;
+
+      if (typeLabelA === typeLabelB) {
+        type = typeLabelA;
+      } else if (!typeLabelA) {
+        type = chalk.green(typeLabelB);
+      } else if (!typeLabelB) {
+        type = chalk.red(typeLabelA);
       } else {
-        type = `${chalk.red(entry.typeA.label)} => ${chalk.green(entry.typeB.label)}`;
+        type = `${chalk.red(typeLabelA)} => ${chalk.green(typeLabelB)}`;
       }
 
       const visualizationA = visualizeSlot(

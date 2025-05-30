@@ -7,6 +7,7 @@ import type {
   CollatedSlotEntry,
 } from '../types.js';
 import { validateStorageLayout } from './validation.js';
+import { max, min } from '@nomicfoundation/hardhat-utils/bigint';
 import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
@@ -149,36 +150,44 @@ export const mergeCollatedStorageLayouts = (
 ): MergedCollatedSlot[] => {
   const output: MergedCollatedSlot[] = [];
 
-  if (slotsA.length !== slotsB.length) {
-    const tail: CollatedSlot[] = Array(Math.abs(slotsA.length - slotsB.length));
-    tail.fill({ id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] });
+  // TODO: this will break if either array is empty
+  const firstIdA = slotsA[0].id;
+  const firstIdB = slotsB[0].id;
+  const lastIdA = slotsA[slotsA.length - 1].id;
+  const lastIdB = slotsB[slotsB.length - 1].id;
 
-    if (slotsA.length > slotsB.length) {
-      slotsB = [...slotsB, ...tail];
-    } else if (slotsB.length > slotsA.length) {
-      slotsA = [...slotsA, ...tail];
-    }
+  const emptySlot = { id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] };
+
+  if (firstIdA > firstIdB) {
+    const count = min(firstIdA, lastIdB + 1n) - firstIdB;
+    const head = Array(Number(count)).fill(emptySlot);
+    slotsA = [...head, ...slotsA];
+  } else if (firstIdB > firstIdA) {
+    const count = min(firstIdB, lastIdA + 1n) - firstIdA;
+    const head = Array(Number(count)).fill(emptySlot);
+    slotsB = [...head, ...slotsB];
   }
 
-  // TODO: handle non-zero slot indexes
+  if (lastIdA < lastIdB) {
+    const count = lastIdB - max(firstIdB - 1n, lastIdA);
+    const tail = Array(Number(count)).fill(emptySlot);
+    slotsA = [...slotsA, ...tail];
+  } else if (lastIdB < lastIdA) {
+    const count = lastIdA - max(firstIdA - 1n, lastIdB);
+    const tail = Array(Number(count)).fill(emptySlot);
+    slotsB = [...slotsB, ...tail];
+  }
+
   for (let i = 0; i < slotsA.length; i++) {
-    type Entry = Omit<CollatedSlotEntry, 'name'> & { name?: string };
+    type Entry = Pick<CollatedSlotEntry, 'size' | 'offset'> & {
+      name?: string;
+      type?: CollatedSlotEntry['type'];
+    };
 
     const slotA = slotsA[i];
     const slotB = slotsB[i];
     const slotAEntries: Entry[] = [...slotA.entries];
     const slotBEntries: Entry[] = [...slotB.entries];
-
-    const tail: Entry[] = [
-      ...slotAEntries.slice(slotBEntries.length),
-      ...slotBEntries.slice(slotAEntries.length),
-    ].map((entry) => ({ size: 0, offset: entry.offset, type: entry.type }));
-
-    if (slotAEntries.length > slotBEntries.length) {
-      slotBEntries.push(...tail);
-    } else if (slotBEntries.length > slotAEntries.length) {
-      slotAEntries.push(...tail);
-    }
 
     const mergedEntries: MergedCollatedSlotEntry[] = [];
 
@@ -211,8 +220,38 @@ export const mergeCollatedStorageLayouts = (
       if (endB <= endA) entryIndexB++;
     }
 
+    while ((entryA = slotAEntries[entryIndexA])) {
+      const mergedEntry: MergedCollatedSlotEntry = {
+        nameA: entryA.name,
+        sizeA: entryA.size,
+        sizeB: 0,
+        offsetA: entryA.offset,
+        offsetB: 0,
+        typeA: entryA.type,
+      };
+
+      mergedEntries.push(mergedEntry);
+
+      entryIndexA++;
+    }
+
+    while ((entryB = slotBEntries[entryIndexB])) {
+      const mergedEntry: MergedCollatedSlotEntry = {
+        nameB: entryB.name,
+        sizeA: 0,
+        sizeB: entryB.size,
+        offsetA: 0,
+        offsetB: entryB.offset,
+        typeB: entryB.type,
+      };
+
+      mergedEntries.push(mergedEntry);
+
+      entryIndexB++;
+    }
+
     output.push({
-      id: BigInt(i),
+      id: slotA.id || slotB.id,
       sizeReservedA: slotA.sizeReserved,
       sizeReservedB: slotB.sizeReserved,
       sizeFilledA: slotA.sizeFilled,

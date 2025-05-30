@@ -57,8 +57,8 @@ export type MergedCollatedSlotEntry = {
   sizeB: number;
   offsetA: number;
   offsetB: number;
-  typeA: StorageType;
-  typeB: StorageType;
+  typeA?: StorageType;
+  typeB?: StorageType;
 };
 
 export type MergedCollatedSlot = {
