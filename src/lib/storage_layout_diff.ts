@@ -224,11 +224,13 @@ export const mergeCollatedStorageLayouts = (
     while ((entryA = slotAEntries[entryIndexA])) {
       const mergedEntry: MergedCollatedSlotEntry = {
         nameA: entryA.name,
+        nameB: undefined,
         sizeA: entryA.size,
         sizeB: 0,
         offsetA: entryA.offset,
         offsetB: 0,
         typeA: entryA.type,
+        typeB: undefined,
       };
 
       mergedEntries.push(mergedEntry);
@@ -238,11 +240,13 @@ export const mergeCollatedStorageLayouts = (
 
     while ((entryB = slotBEntries[entryIndexB])) {
       const mergedEntry: MergedCollatedSlotEntry = {
+        nameA: undefined,
         nameB: entryB.name,
         sizeA: 0,
         sizeB: entryB.size,
         offsetA: 0,
         offsetB: entryB.offset,
+        typeA: undefined,
         typeB: entryB.type,
       };
 
