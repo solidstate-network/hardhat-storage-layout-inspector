@@ -1,4 +1,4 @@
-# Hardhat Storage Layout Diff
+# Hardhat Storage Layout Inspector
 
 Inspect and compare Solidity smart contract storage layouts.
 
