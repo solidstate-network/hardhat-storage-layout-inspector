@@ -120,9 +120,10 @@ export const collateStorageLayout = (
       // retrieve the slot from the array in case a new one was added during the recursive call
       slots[slots.length - 1].sizeReserved = 32;
     } else {
-      // type is a value type, a dynamic array, or a mapping
+      // type is a value type, a dynamic array (including bytes and string), or a mapping
 
       // a dynamic array slot stores the array length using 32 bytes
+      // bytes and string have distinct "long" and "short" encodings, but use 32 bytes regardless
       // a mapping slot reserves 32 bytes, but contains no data
 
       const sizeReserved = Number(type.numberOfBytes);

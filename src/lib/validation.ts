@@ -70,7 +70,9 @@ const isValidTypes = (storageTypes: StorageTypes): boolean => {
 const isValidStorageType = (storageType: StorageType): boolean => {
   try {
     assert(
-      ['inplace', 'mapping', 'dynamic_array'].includes(storageType.encoding),
+      ['inplace', 'mapping', 'dynamic_array', 'bytes'].includes(
+        storageType.encoding,
+      ),
     );
     assert(typeof storageType.label === 'string');
 

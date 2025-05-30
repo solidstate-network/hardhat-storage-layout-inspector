@@ -18,7 +18,7 @@ export type StorageElement = {
 };
 
 export type StorageType = {
-  encoding: 'inplace' | 'mapping' | 'dynamic_array';
+  encoding: 'inplace' | 'mapping' | 'dynamic_array' | 'bytes';
   label: string;
   numberOfBytes: string;
   // `base` is present on array types and represents the type of each array element
