@@ -166,8 +166,8 @@ export const mergeCollatedStorageLayouts = (
 
     const slotA = slotsA[i];
     const slotB = slotsB[i];
-    const slotAEntries: Entry[] = slotA.entries;
-    const slotBEntries: Entry[] = slotB.entries;
+    const slotAEntries: Entry[] = [...slotA.entries];
+    const slotBEntries: Entry[] = [...slotB.entries];
 
     const tail: Entry[] = [
       ...slotAEntries.slice(slotBEntries.length),
