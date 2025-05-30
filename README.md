@@ -7,9 +7,9 @@ Inspect and compare Solidity smart contract storage layouts.
 ## Installation
 
 ```bash
-npm install --save-dev @solidstate/hardhat-storage-layout-diff
+npm install --save-dev @solidstate/hardhat-storage-layout-inspector
 # or
-pnpm add -D @solidstate/hardhat-storage-layout-diff
+pnpm add -D @solidstate/hardhat-storage-layout-inspector
 ```
 
 ## Usage
@@ -17,11 +17,11 @@ pnpm add -D @solidstate/hardhat-storage-layout-diff
 Load plugin in Hardhat config:
 
 ```javascript
-import HardhatStorageLayoutDiff from '@solidstate/hardhat-storage-layout-diff';
+import HardhatStorageLayoutInspector from '@solidstate/hardhat-storage-layout-inspector';
 
 const config: HardhatUserConfig = {
   plugins: [
-    HardhatStorageLayoutDiff,
+    HardhatStorageLayoutInspector,
   ],
   storageLayoutDiff: {
     ... // see table for configuration options

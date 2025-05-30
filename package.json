@@ -1,5 +1,5 @@
 {
-  "name": "@solidstate/hardhat-storage-layout-diff",
+  "name": "@solidstate/hardhat-storage-layout-inspector",
   "version": "1.0.0",
   "description": "Compare storage layouts between two contracts",
   "keywords": [
@@ -13,7 +13,7 @@
     "blockchain",
     "wow"
   ],
-  "repository": "github:solidstate-network/hardhat-storage-layout-diff",
+  "repository": "github:solidstate-network/hardhat-storage-layout-inspector",
   "license": "MIT",
   "author": "Nick Barry",
   "type": "module",
