@@ -162,7 +162,7 @@ export const mergeCollatedStorageLayouts = (
 
   // TODO: handle non-zero slot indexes
   for (let i = 0; i < slotsA.length; i++) {
-    type Entry = Omit<CollatedSlotEntry, 'name'>;
+    type Entry = Omit<CollatedSlotEntry, 'name'> & { name?: string };
 
     const slotA = slotsA[i];
     const slotB = slotsB[i];
