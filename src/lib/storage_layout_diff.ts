@@ -9,7 +9,6 @@ import type {
 import { validateStorageLayout } from './validation.js';
 import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
-import assert from 'node:assert';
 import path from 'node:path';
 
 export const loadStorageLayout = async (
@@ -148,11 +147,20 @@ export const mergeCollatedStorageLayouts = (
   slotsA: CollatedSlot[],
   slotsB: CollatedSlot[],
 ): MergedCollatedSlot[] => {
-  // TODO: support different lengths
-  assert.equal(slotsA.length, slotsB.length);
-
   const output: MergedCollatedSlot[] = [];
 
+  if (slotsA.length !== slotsB.length) {
+    const tail: CollatedSlot[] = Array(Math.abs(slotsA.length - slotsB.length));
+    tail.fill({ id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] });
+
+    if (slotsA.length > slotsB.length) {
+      slotsB = [...slotsB, ...tail];
+    } else if (slotsB.length > slotsA.length) {
+      slotsA = [...slotsA, ...tail];
+    }
+  }
+
+  // TODO: handle non-zero slot indexes
   for (let i = 0; i < slotsA.length; i++) {
     const slotA = slotsA[i];
     const slotB = slotsB[i];
@@ -200,7 +208,7 @@ export const mergeCollatedStorageLayouts = (
     }
 
     output.push({
-      id: slotA.id,
+      id: BigInt(i),
       sizeReservedA: slotA.sizeReserved,
       sizeReservedB: slotB.sizeReserved,
       sizeFilledA: slotA.sizeFilled,
