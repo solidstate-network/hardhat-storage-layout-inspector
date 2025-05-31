@@ -1,3 +1,0 @@
-{
-  "*.{js,ts,ejs,sol,json,md}": ["prettier --write"]
-}

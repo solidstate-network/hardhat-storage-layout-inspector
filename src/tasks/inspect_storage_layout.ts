@@ -1,17 +1,22 @@
-import {
-  getCollatedStorageLayout,
-  printCollatedSlots,
-} from '../lib/storage_layout_diff';
-import { TASK_INSPECT_STORAGE_LAYOUT } from '../task_names';
-import { TASK_COMPILE } from 'hardhat/builtin-tasks/task-names';
+import { TASK_INSPECT_STORAGE_LAYOUT } from '../task_names.js';
 import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
 
-task(TASK_INSPECT_STORAGE_LAYOUT)
-  .addPositionalParam('contract', 'Contract whose storage layout to inspect')
-  .setAction(async (args, hre) => {
-    await hre.run(TASK_COMPILE);
-
-    const slots = await getCollatedStorageLayout(hre, args.contract);
-
-    printCollatedSlots(slots);
-  });
+export default task(TASK_INSPECT_STORAGE_LAYOUT)
+  .addPositionalArgument({
+    name: 'contract',
+    description: 'Contract whose storage layout to inspect',
+  })
+  .addOption({
+    name: 'rev',
+    description: 'Git revision where contract is defined',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
+  })
+  .addFlag({
+    name: 'noCompile',
+    description:
+      'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
+  })
+  .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
+  .build();

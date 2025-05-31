@@ -1,24 +1,32 @@
-import {
-  getCollatedStorageLayout,
-  mergeCollatedSlots,
-  printMergedCollatedSlots,
-} from '../lib/storage_layout_diff';
-import { TASK_DIFF_STORAGE_LAYOUT } from '../task_names';
-import { TASK_COMPILE } from 'hardhat/builtin-tasks/task-names';
+import { TASK_DIFF_STORAGE_LAYOUT } from '../task_names.js';
 import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
 
-task(TASK_DIFF_STORAGE_LAYOUT)
-  .addPositionalParam('a', 'First contract whose storage layout to inspect')
-  .addPositionalParam('b', 'Second contract whose storage layout to inspect')
-  .addOptionalParam('aRef', 'Git reference where contract A is defined')
-  .addOptionalParam('bRef', 'Git reference where contract B is defined')
-  .setAction(async (args, hre) => {
-    await hre.run(TASK_COMPILE);
-
-    const slotsA = await getCollatedStorageLayout(hre, args.a, args.aRef);
-    const slotsB = await getCollatedStorageLayout(hre, args.b, args.bRef);
-
-    const slots = mergeCollatedSlots(slotsA, slotsB);
-
-    printMergedCollatedSlots(slots);
-  });
+export default task(TASK_DIFF_STORAGE_LAYOUT)
+  .addPositionalArgument({
+    name: 'a',
+    description: 'First contract whose storage layout to inspect',
+  })
+  .addPositionalArgument({
+    name: 'b',
+    description: 'Second contract whose storage layout to inspect',
+  })
+  .addOption({
+    name: 'aRev',
+    description: 'Git revision where contract A is defined',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
+  })
+  .addOption({
+    name: 'bRev',
+    description: 'Git revision where contract B is defined',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
+  })
+  .addFlag({
+    name: 'noCompile',
+    description:
+      'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
+  })
+  .setAction(import.meta.resolve('../actions/diff_storage_layout.js'))
+  .build();
