@@ -1,4 +1,4 @@
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 import taskDiffStorageLayout from './tasks/diff_storage_layout.js';
 import taskExportStorageLayout from './tasks/export_storage_layout.js';
 import taskInspectStorageLayout from './tasks/inspect_storage_layout.js';

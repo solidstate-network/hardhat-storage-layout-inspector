@@ -1,4 +1,4 @@
-import pkg from '../../package.json';
+import pkg from '../../package.json' with { type: 'json' };
 import { loadStorageLayout } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
 import { filter } from '@solidstate/hardhat-solidstate-utils/filter';
