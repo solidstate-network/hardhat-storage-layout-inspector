@@ -1,6 +1,7 @@
 import pkg from '../../package.json';
 import { loadStorageLayout } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
+import { filter } from '@solidstate/hardhat-solidstate-utils/filter';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 import fs from 'node:fs';
@@ -44,12 +45,12 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
     fs.mkdirSync(outputDirectory, { recursive: true });
   }
 
-  for (let fullName of await hre.artifacts.getAllFullyQualifiedNames()) {
-    if (config.only.length && !config.only.some((m) => fullName.match(m)))
-      continue;
-    if (config.except.length && config.except.some((m) => fullName.match(m)))
-      continue;
+  const fullNames = filter(
+    Array.from(await hre.artifacts.getAllFullyQualifiedNames()),
+    config,
+  );
 
+  for (let fullName of fullNames) {
     const storageLayout = await loadStorageLayout(hre, fullName);
     const { storage, types } = storageLayout;
 

@@ -1,11 +1,11 @@
-export interface StorageLayoutDiffConfig {
+import type { FilterOptions } from '@solidstate/hardhat-solidstate-utils/types';
+
+export type StorageLayoutDiffConfig = {
   path: string;
   clear: boolean;
   flat: boolean;
-  only: string[];
-  except: string[];
   spacing: number;
-}
+} & FilterOptions;
 
 export type StorageLayoutDiffUserConfig = Partial<StorageLayoutDiffConfig>;
 
