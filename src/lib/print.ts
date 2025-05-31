@@ -1,6 +1,6 @@
 import type { CollatedSlot, MergedCollatedSlot } from '../types.js';
+import { createTable } from '@solidstate/hardhat-solidstate-utils/table';
 import chalk from 'chalk';
-import Table from 'cli-table3';
 
 const visualizeSlot = (offset: number, size: number, slotFill: number) => {
   const chars = {
@@ -18,25 +18,7 @@ const visualizeSlot = (offset: number, size: number, slotFill: number) => {
 };
 
 export const printCollatedSlots = (slots: CollatedSlot[]) => {
-  const table = new Table({
-    style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
-    chars: {
-      mid: '·',
-      'top-mid': '|',
-      'left-mid': ' ·',
-      'mid-mid': '|',
-      'right-mid': '·',
-      left: ' |',
-      'top-left': ' ·',
-      'top-right': '·',
-      'bottom-left': ' ·',
-      'bottom-right': '·',
-      middle: '·',
-      top: '-',
-      bottom: '-',
-      'bottom-mid': '|',
-    },
-  });
+  const table = createTable();
 
   table.push([
     { content: chalk.bold('Slot') },
@@ -68,25 +50,7 @@ export const printCollatedSlots = (slots: CollatedSlot[]) => {
 };
 
 export const printMergedCollatedSlots = (slots: MergedCollatedSlot[]) => {
-  const table = new Table({
-    style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
-    chars: {
-      mid: '·',
-      'top-mid': '|',
-      'left-mid': ' ·',
-      'mid-mid': '|',
-      'right-mid': '·',
-      left: ' |',
-      'top-left': ' ·',
-      'top-right': '·',
-      'bottom-left': ' ·',
-      'bottom-right': '·',
-      middle: '·',
-      top: '-',
-      bottom: '-',
-      'bottom-mid': '|',
-    },
-  });
+  const table = createTable();
 
   table.push([
     { content: chalk.bold('Slot') },
