@@ -1,10 +1,10 @@
 import pkg from '../../package.json' with { type: 'json' };
 import { loadStorageLayout } from '../lib/storage_layout_diff.js';
 import { TASK_COMPILE } from '../task_names.js';
+import { remove, writeUtf8File } from '@nomicfoundation/hardhat-utils/fs';
 import { filter } from '@solidstate/hardhat-solidstate-utils/filter';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
-import fs from 'node:fs';
 import path from 'node:path';
 
 interface TaskActionArguments {
@@ -37,12 +37,8 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
     );
   }
 
-  if (config.clear && fs.existsSync(outputDirectory)) {
-    fs.rmdirSync(outputDirectory, { recursive: true });
-  }
-
-  if (!fs.existsSync(outputDirectory)) {
-    fs.mkdirSync(outputDirectory, { recursive: true });
+  if (config.clear) {
+    await remove(outputDirectory);
   }
 
   const fullNames = filter(
@@ -59,11 +55,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
     const destination =
       path.resolve(outputDirectory, config.flat ? '' : '', fullName) + '.json';
 
-    if (!fs.existsSync(path.dirname(destination))) {
-      fs.mkdirSync(path.dirname(destination), { recursive: true });
-    }
-
-    fs.writeFileSync(
+    await writeUtf8File(
       destination,
       `${JSON.stringify({ storage, types }, null, config.spacing)}\n`,
     );
