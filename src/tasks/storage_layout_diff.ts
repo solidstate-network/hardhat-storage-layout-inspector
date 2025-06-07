@@ -1,8 +1,8 @@
-import { TASK_DIFF_STORAGE_LAYOUT } from '../task_names.js';
+import { TASK_STORAGE_LAYOUT_DIFF } from '../task_names.js';
 import { task } from 'hardhat/config';
 import { ArgumentType } from 'hardhat/types/arguments';
 
-export default task(TASK_DIFF_STORAGE_LAYOUT)
+export default task(TASK_STORAGE_LAYOUT_DIFF)
   .addPositionalArgument({
     name: 'a',
     description: 'First contract whose storage layout to inspect',
@@ -28,5 +28,5 @@ export default task(TASK_DIFF_STORAGE_LAYOUT)
     description:
       'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
-  .setAction(import.meta.resolve('../actions/diff_storage_layout.js'))
+  .setAction(import.meta.resolve('../actions/storage_layout_diff.js'))
   .build();

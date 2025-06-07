@@ -1,8 +1,8 @@
-import { TASK_INSPECT_STORAGE_LAYOUT } from '../task_names.js';
+import { TASK_STORAGE_LAYOUT_INSPECT } from '../task_names.js';
 import { task } from 'hardhat/config';
 import { ArgumentType } from 'hardhat/types/arguments';
 
-export default task(TASK_INSPECT_STORAGE_LAYOUT)
+export default task(TASK_STORAGE_LAYOUT_INSPECT)
   .addPositionalArgument({
     name: 'contract',
     description: 'Contract whose storage layout to inspect',
@@ -18,5 +18,5 @@ export default task(TASK_INSPECT_STORAGE_LAYOUT)
     description:
       'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
-  .setAction(import.meta.resolve('../actions/inspect_storage_layout.js'))
+  .setAction(import.meta.resolve('../actions/storage_layout_inspect.js'))
   .build();

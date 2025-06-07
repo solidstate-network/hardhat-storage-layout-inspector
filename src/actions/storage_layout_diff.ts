@@ -8,7 +8,7 @@ import {
 import { TASK_COMPILE } from '../task_names.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
-interface DiffStorageLayoutTaskActionArguments {
+interface TaskActionArguments {
   a: string;
   b: string;
   aRev?: string;
@@ -16,9 +16,10 @@ interface DiffStorageLayoutTaskActionArguments {
   noCompile: boolean;
 }
 
-const action: NewTaskActionFunction<
-  DiffStorageLayoutTaskActionArguments
-> = async (args, hre) => {
+const action: NewTaskActionFunction<TaskActionArguments> = async (
+  args,
+  hre,
+) => {
   const { aRev, bRev } = args;
 
   const hreRevA = aRev

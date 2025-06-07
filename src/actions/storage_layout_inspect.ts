@@ -7,15 +7,16 @@ import {
 import { TASK_COMPILE } from '../task_names.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
-interface InspectStorageLayoutTaskActionArguments {
+interface TaskActionArguments {
   contract: string;
   rev?: string;
   noCompile: boolean;
 }
 
-const action: NewTaskActionFunction<
-  InspectStorageLayoutTaskActionArguments
-> = async (args, hre) => {
+const action: NewTaskActionFunction<TaskActionArguments> = async (
+  args,
+  hre,
+) => {
   if (args.rev) {
     hre = await prepareHardhatRuntimeEnvironment(hre.config, args.rev);
   } else if (!args.noCompile) {
