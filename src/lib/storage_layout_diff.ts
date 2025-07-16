@@ -10,6 +10,7 @@ import { validateStorageLayout } from './validation.js';
 import { max, min } from '@nomicfoundation/hardhat-utils/bigint';
 import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
+import type { SolidityBuildInfoOutput } from 'hardhat/types/solidity';
 import path from 'node:path';
 
 export const loadStorageLayout = async (
@@ -37,7 +38,7 @@ const getStorageLayoutFromFile = async (
   // user path as-is if absolute
   const filePath = path.resolve(hre.config.paths.root, fileName);
 
-  const storageLayout = (await readJsonFile(filePath)) as any;
+  const storageLayout = (await readJsonFile(filePath)) as StorageLayout;
 
   validateStorageLayout(storageLayout, filePath);
 
@@ -58,10 +59,12 @@ const getStorageLayoutFromArtifact = async (
     buildInfoId!,
   );
 
-  const buildInfo = (await readJsonFile(buildInfoPath!)) as any;
+  const buildInfo = (await readJsonFile(
+    buildInfoPath!,
+  )) as SolidityBuildInfoOutput;
 
   const { storageLayout } =
-    buildInfo.output.contracts[sourceName][contractName];
+    buildInfo.output.contracts![sourceName][contractName];
 
   validateStorageLayout(storageLayout, contractNameOrFullyQualifiedName);
 
