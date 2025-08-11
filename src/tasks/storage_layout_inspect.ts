@@ -18,5 +18,5 @@ export default task(TASK_STORAGE_LAYOUT_INSPECT)
     description:
       'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
-  .setAction(import.meta.resolve('../actions/storage_layout_inspect.js'))
+  .setAction(() => import('../actions/storage_layout_inspect.js'))
   .build();

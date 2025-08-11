@@ -28,5 +28,5 @@ export default task(TASK_STORAGE_LAYOUT_DIFF)
     description:
       'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
   })
-  .setAction(import.meta.resolve('../actions/storage_layout_diff.js'))
+  .setAction(() => import('../actions/storage_layout_diff.js'))
   .build();

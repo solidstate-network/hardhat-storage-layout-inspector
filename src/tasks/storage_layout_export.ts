@@ -7,5 +7,5 @@ export default task(TASK_STORAGE_LAYOUT_EXPORT)
     name: 'noCompile',
     description: "Don't compile before running this task",
   })
-  .setAction(import.meta.resolve('../actions/storage_layout_export.js'))
+  .setAction(() => import('../actions/storage_layout_export.js'))
   .build();

@@ -13,7 +13,7 @@ export const prepareHardhatRuntimeEnvironment = async (
   const plugin: HardhatPlugin = {
     id: `${pkg.name}_temp`,
     hookHandlers: {
-      config: import.meta.resolve('../hooks/config.js'),
+      config: () => import('../hooks/config.js'),
     },
   };
 
