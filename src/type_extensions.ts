@@ -1,8 +1,10 @@
 import type {
+  StorageLayout,
   StorageLayoutDiffConfig,
   StorageLayoutDiffUserConfig,
-} from './types';
+} from './types.js';
 import 'hardhat/types/config';
+import 'hardhat/types/solidity';
 
 declare module 'hardhat/types/config' {
   interface HardhatConfig {
@@ -11,5 +13,11 @@ declare module 'hardhat/types/config' {
 
   interface HardhatUserConfig {
     storageLayoutDiff?: StorageLayoutDiffUserConfig;
+  }
+}
+
+declare module 'hardhat/types/solidity' {
+  interface CompilerOutputContract {
+    storageLayout: StorageLayout;
   }
 }

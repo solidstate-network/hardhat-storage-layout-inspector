@@ -1,135 +1,74 @@
-import pkg from '../../package.json';
-import chalk from 'chalk';
-import Table from 'cli-table3';
-import { TASK_COMPILE } from 'hardhat/builtin-tasks/task-names';
-import { HardhatPluginError } from 'hardhat/plugins';
-import type { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { parseFullyQualifiedName } from 'hardhat/utils/contract-names';
-import assert from 'node:assert';
-import simpleGit from 'simple-git';
+import type {
+  StorageLayout,
+  CollatedSlot,
+  StorageElement,
+  MergedCollatedSlot,
+  MergedCollatedSlotEntry,
+  CollatedSlotEntry,
+} from '../types.js';
+import { validateStorageLayout } from './validation.js';
+import { max, min } from '@nomicfoundation/hardhat-utils/bigint';
+import { readJsonFile } from '@nomicfoundation/hardhat-utils/fs';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
+import type { SolidityBuildInfoOutput } from 'hardhat/types/solidity';
+import path from 'node:path';
 
-type StorageElement = {
-  contract: string;
-  label: string;
-  offset: number;
-  slot: string;
-  type: string;
-};
-
-type StorageType = {
-  encoding: 'inplace' | 'mapping' | 'dynamic_array';
-  label: string;
-  numberOfBytes: string;
-  // `base` is present on array types and represents the type of each array element
-  base?: string;
-  // `members` is present on struct types and is a list of component types
-  members?: StorageElement[];
-};
-
-type StorageTypes = {
-  [name: string]: StorageType;
-};
-
-type StorageLayout = {
-  storage: StorageElement[];
-  types: StorageTypes;
-};
-
-type CollatedSlotEntry = {
-  name: string;
-  size: number;
-  offset: number;
-  type: StorageType;
-};
-
-type CollatedSlot = {
-  id: bigint;
-  sizeReserved: number;
-  sizeFilled: number;
-  entries: CollatedSlotEntry[];
-};
-
-type MergedCollatedSlotEntry = {
-  nameA: string;
-  nameB: string;
-  sizeA: number;
-  sizeB: number;
-  offsetA: number;
-  offsetB: number;
-  typeA: StorageType;
-  typeB: StorageType;
-};
-
-type MergedCollatedSlot = {
-  id: bigint;
-  sizeReservedA: number;
-  sizeReservedB: number;
-  sizeFilledA: number;
-  sizeFilledB: number;
-  entries: MergedCollatedSlotEntry[];
-};
-
-export const visualizeSlot = (
-  offset: number,
-  size: number,
-  slotFill: number,
-) => {
-  const chars = {
-    filled: '▰',
-    placeholder: '▱',
-    empty: ' ',
-  };
-
-  return (
-    chars.empty.repeat(32 - slotFill) +
-    chars.placeholder.repeat(slotFill - size - offset) +
-    chars.filled.repeat(size) +
-    chars.placeholder.repeat(offset)
-  );
-};
-
-export const getRawStorageLayout = async (
-  hre: HardhatRuntimeEnvironment,
-  fullName: string,
-  ref?: string,
+export const loadStorageLayout = async (
+  hre: Pick<HardhatRuntimeEnvironment, 'artifacts' | 'config'>,
+  contractNameOrFullyQualifiedNameOrFile: string,
 ): Promise<StorageLayout> => {
-  let buildInfo;
-
-  if (ref) {
-    const repository = simpleGit();
-    await repository.init();
-    await repository.checkout(ref);
-
-    try {
-      await hre.run(TASK_COMPILE);
-      buildInfo = await hre.artifacts.getBuildInfo(fullName);
-    } catch (error) {
-      throw error;
-    } finally {
-      await repository.checkout('-');
-      // TODO: create a temp hre or set hre.config.paths.artifacts to avoid the need for recompilation
-      await hre.run(TASK_COMPILE);
-    }
+  if (path.extname(contractNameOrFullyQualifiedNameOrFile) === '.json') {
+    return await getStorageLayoutFromFile(
+      hre,
+      contractNameOrFullyQualifiedNameOrFile,
+    );
   } else {
-    buildInfo = await hre.artifacts.getBuildInfo(fullName);
+    return await getStorageLayoutFromArtifact(
+      hre,
+      contractNameOrFullyQualifiedNameOrFile,
+    );
   }
-
-  if (!buildInfo) {
-    throw new HardhatPluginError(pkg.name, `contract not found`);
-  }
-
-  const { sourceName, contractName } = parseFullyQualifiedName(fullName);
-
-  return (buildInfo.output.contracts[sourceName][contractName] as any)
-    .storageLayout;
 };
 
-export const getCollatedStorageLayout = async function (
-  hre: HardhatRuntimeEnvironment,
-  fullName: string,
-  ref?: string,
-) {
-  return collateStorageLayout(await getRawStorageLayout(hre, fullName, ref));
+const getStorageLayoutFromFile = async (
+  hre: Pick<HardhatRuntimeEnvironment, 'config'>,
+  fileName: string,
+): Promise<StorageLayout> => {
+  // resolve relative path with respect to hardhat project root
+  // user path as-is if absolute
+  const filePath = path.resolve(hre.config.paths.root, fileName);
+
+  const storageLayout = (await readJsonFile(filePath)) as StorageLayout;
+
+  validateStorageLayout(storageLayout, filePath);
+
+  return storageLayout;
+};
+
+const getStorageLayoutFromArtifact = async (
+  hre: Pick<HardhatRuntimeEnvironment, 'artifacts'>,
+  contractNameOrFullyQualifiedName: string,
+): Promise<StorageLayout> => {
+  const artifact = await hre.artifacts.readArtifact(
+    contractNameOrFullyQualifiedName,
+  );
+
+  const { buildInfoId, sourceName, contractName } = artifact;
+
+  const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
+    buildInfoId!,
+  );
+
+  const buildInfo = (await readJsonFile(
+    buildInfoPath!,
+  )) as SolidityBuildInfoOutput;
+
+  const { storageLayout } =
+    buildInfo.output.contracts![sourceName][contractName];
+
+  validateStorageLayout(storageLayout, contractNameOrFullyQualifiedName);
+
+  return storageLayout;
 };
 
 export const collateStorageLayout = (
@@ -140,14 +79,15 @@ export const collateStorageLayout = (
   type Element = Pick<StorageElement, 'type' | 'label'>;
 
   const reducer = (slots: CollatedSlot[], element: Element) => {
-    const type = types[element.type];
+    // types will only be null if the storage array is empty
+    const type = types![element.type];
 
     let slot = slots[slots.length - 1];
 
     if (!slot) {
       // create a new slot if none exist
-      // TODO: custom layout feature allows first slot to be > 0
-      slot = { id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] };
+      const layoutOffset = BigInt(storageLayout.storage[0].slot);
+      slot = { id: layoutOffset, sizeReserved: 0, sizeFilled: 0, entries: [] };
       slots.push(slot);
     } else if (Number(type.numberOfBytes) + slot.sizeReserved > 32) {
       // create a new slot if current element doesn't fit
@@ -183,9 +123,10 @@ export const collateStorageLayout = (
       // retrieve the slot from the array in case a new one was added during the recursive call
       slots[slots.length - 1].sizeReserved = 32;
     } else {
-      // type is a value type, a dynamic array, or a mapping
+      // type is a value type, a dynamic array (including bytes and string), or a mapping
 
       // a dynamic array slot stores the array length using 32 bytes
+      // bytes and string have distinct "long" and "short" encodings, but use 32 bytes regardless
       // a mapping slot reserves 32 bytes, but contains no data
 
       const sizeReserved = Number(type.numberOfBytes);
@@ -208,34 +149,60 @@ export const collateStorageLayout = (
   return storage.reduce(reducer, []);
 };
 
-export const mergeCollatedSlots = (
+export const mergeCollatedStorageLayouts = (
   slotsA: CollatedSlot[],
   slotsB: CollatedSlot[],
 ): MergedCollatedSlot[] => {
-  // TODO: support starting from slot > 0
-  // TODO: must use bigint or string for custom layouts
-
-  // TODO: support different lengths
-  assert.equal(slotsA.length, slotsB.length);
-
   const output: MergedCollatedSlot[] = [];
 
+  const firstIdA = slotsA[0]?.id ?? -0n;
+  const firstIdB = slotsB[0]?.id ?? -0n;
+  const lastIdA = slotsA[slotsA.length - 1]?.id ?? -1n;
+  const lastIdB = slotsB[slotsB.length - 1]?.id ?? -1n;
+
+  const emptySlot = { id: 0n, sizeReserved: 0, sizeFilled: 0, entries: [] };
+
+  if (firstIdA > firstIdB) {
+    const count = min(firstIdA, lastIdB + 1n) - firstIdB;
+    const head = Array(Number(count)).fill(emptySlot);
+    slotsA = [...head, ...slotsA];
+  } else if (firstIdB > firstIdA) {
+    const count = min(firstIdB, lastIdA + 1n) - firstIdA;
+    const head = Array(Number(count)).fill(emptySlot);
+    slotsB = [...head, ...slotsB];
+  }
+
+  if (lastIdA < lastIdB) {
+    const count = lastIdB - max(firstIdB - 1n, lastIdA);
+    const tail = Array(Number(count)).fill(emptySlot);
+    slotsA = [...slotsA, ...tail];
+  } else if (lastIdB < lastIdA) {
+    const count = lastIdA - max(firstIdA - 1n, lastIdB);
+    const tail = Array(Number(count)).fill(emptySlot);
+    slotsB = [...slotsB, ...tail];
+  }
+
   for (let i = 0; i < slotsA.length; i++) {
+    type Entry = Pick<CollatedSlotEntry, 'size' | 'offset'> & {
+      name?: string;
+      type?: CollatedSlotEntry['type'];
+    };
+
     const slotA = slotsA[i];
     const slotB = slotsB[i];
-
-    assert.equal(slotA.id, slotB.id);
+    const slotAEntries: Entry[] = [...slotA.entries];
+    const slotBEntries: Entry[] = [...slotB.entries];
 
     const mergedEntries: MergedCollatedSlotEntry[] = [];
 
     let entryIndexA = 0;
     let entryIndexB = 0;
-    let entryA;
-    let entryB;
+    let entryA: Entry;
+    let entryB: Entry;
 
     while (
-      (entryA = slotA.entries[entryIndexA]) &&
-      (entryB = slotB.entries[entryIndexB])
+      (entryA = slotAEntries[entryIndexA]) &&
+      (entryB = slotBEntries[entryIndexB])
     ) {
       const mergedEntry: MergedCollatedSlotEntry = {
         nameA: entryA.name,
@@ -257,10 +224,42 @@ export const mergeCollatedSlots = (
       if (endB <= endA) entryIndexB++;
     }
 
-    // TODO: add tail entries
+    while ((entryA = slotAEntries[entryIndexA])) {
+      const mergedEntry: MergedCollatedSlotEntry = {
+        nameA: entryA.name,
+        nameB: undefined,
+        sizeA: entryA.size,
+        sizeB: 0,
+        offsetA: entryA.offset,
+        offsetB: 0,
+        typeA: entryA.type,
+        typeB: undefined,
+      };
+
+      mergedEntries.push(mergedEntry);
+
+      entryIndexA++;
+    }
+
+    while ((entryB = slotBEntries[entryIndexB])) {
+      const mergedEntry: MergedCollatedSlotEntry = {
+        nameA: undefined,
+        nameB: entryB.name,
+        sizeA: 0,
+        sizeB: entryB.size,
+        offsetA: 0,
+        offsetB: entryB.offset,
+        typeA: undefined,
+        typeB: entryB.type,
+      };
+
+      mergedEntries.push(mergedEntry);
+
+      entryIndexB++;
+    }
 
     output.push({
-      id: slotA.id,
+      id: slotA.id || slotB.id,
       sizeReservedA: slotA.sizeReserved,
       sizeReservedB: slotB.sizeReserved,
       sizeFilledA: slotA.sizeFilled,
@@ -270,150 +269,4 @@ export const mergeCollatedSlots = (
   }
 
   return output;
-};
-
-export const printCollatedSlots = (slots: CollatedSlot[]) => {
-  const table = new Table({
-    style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
-    chars: {
-      mid: '·',
-      'top-mid': '|',
-      'left-mid': ' ·',
-      'mid-mid': '|',
-      'right-mid': '·',
-      left: ' |',
-      'top-left': ' ·',
-      'top-right': '·',
-      'bottom-left': ' ·',
-      'bottom-right': '·',
-      middle: '·',
-      top: '-',
-      bottom: '-',
-      'bottom-mid': '|',
-    },
-  });
-
-  table.push([
-    { content: chalk.bold('Slot') },
-    { content: chalk.bold('Offset') },
-    { content: chalk.bold('Type') },
-    { content: chalk.bold('Name') },
-    { content: chalk.bold('Visualization') },
-  ]);
-
-  for (const slot of slots) {
-    for (const entry of slot.entries) {
-      const visualization = visualizeSlot(
-        entry.offset,
-        entry.size,
-        slot.sizeFilled,
-      );
-
-      table.push([
-        { content: slot.id },
-        { content: entry.offset },
-        { content: entry.type.label },
-        { content: entry.name },
-        { content: visualization },
-      ]);
-    }
-  }
-
-  console.log(table.toString());
-};
-
-export const printMergedCollatedSlots = (slots: MergedCollatedSlot[]) => {
-  const table = new Table({
-    style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
-    chars: {
-      mid: '·',
-      'top-mid': '|',
-      'left-mid': ' ·',
-      'mid-mid': '|',
-      'right-mid': '·',
-      left: ' |',
-      'top-left': ' ·',
-      'top-right': '·',
-      'bottom-left': ' ·',
-      'bottom-right': '·',
-      middle: '·',
-      top: '-',
-      bottom: '-',
-      'bottom-mid': '|',
-    },
-  });
-
-  table.push([
-    { content: chalk.bold('Slot') },
-    { content: chalk.bold('Offset') },
-    { content: chalk.bold('Type') },
-    { content: chalk.bold('Name') },
-    { content: chalk.bold('Visualization') },
-  ]);
-
-  for (const slot of slots) {
-    for (const entry of slot.entries) {
-      let offset;
-      let name;
-      let type;
-
-      if (entry.offsetA === entry.offsetB) {
-        offset = entry.offsetA;
-      } else {
-        offset = `${chalk.red(entry.offsetA)} => ${chalk.green(entry.offsetB)}`;
-      }
-
-      if (entry.nameA === entry.nameB) {
-        name = entry.nameA;
-      } else {
-        name = `${chalk.red(entry.nameA)} => ${chalk.green(entry.nameB)}`;
-      }
-
-      if (entry.typeA.label === entry.typeB.label) {
-        type = entry.typeA.label;
-      } else if (entry.typeA.numberOfBytes === entry.typeB.numberOfBytes) {
-        type = `${chalk.red(entry.typeA.label)} => ${chalk.green(entry.typeB.label)}`;
-      } else {
-        type = `${chalk.red(entry.typeA.label)} => ${chalk.green(entry.typeB.label)}`;
-      }
-
-      const visualizationA = visualizeSlot(
-        entry.offsetA,
-        entry.sizeA,
-        slot.sizeFilledA,
-      );
-      const visualizationB = visualizeSlot(
-        entry.offsetB,
-        entry.sizeB,
-        slot.sizeFilledB,
-      );
-
-      const visualization = visualizationA
-        .split('')
-        .map((charA, i) => {
-          const charB = visualizationB.charAt(i);
-
-          if (charA === charB) {
-            return charA === '▰' ? chalk.magenta(charA) : charA;
-          } else if (charA === '▰' || charB === '▰') {
-            // one char is filled, and it doesn't matter whether the other is a placeholder or empty
-            return chalk.red('▰');
-          } else {
-            // chars differ and neither is filled, so one is a placeholder and one is empty
-            return '▱';
-          }
-        })
-        .join('');
-
-      table.push([
-        { content: slot.id },
-        { content: offset },
-        { content: type },
-        { content: name },
-        { content: visualization },
-      ]);
-    }
-  }
-
-  console.log(table.toString());
 };

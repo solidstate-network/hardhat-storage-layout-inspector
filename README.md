@@ -1,13 +1,15 @@
-# Hardhat Storage Layout Diff
+# Hardhat Storage Layout Inspector
 
 Inspect and compare Solidity smart contract storage layouts.
+
+> Versions of this plugin prior to `1.0.0` were released as `hardhat-storage-layout-diff`, outside of the `@solidstate` namespace.
 
 ## Installation
 
 ```bash
-npm install --save-dev hardhat-storage-layout-diff
+npm install --save-dev @solidstate/hardhat-storage-layout-inspector
 # or
-yarn add --dev hardhat-storage-layout-diff
+pnpm add -D @solidstate/hardhat-storage-layout-inspector
 ```
 
 ## Usage
@@ -15,7 +17,16 @@ yarn add --dev hardhat-storage-layout-diff
 Load plugin in Hardhat config:
 
 ```javascript
-require('hardhat-storage-layout-diff');
+import HardhatStorageLayoutInspector from '@solidstate/hardhat-storage-layout-inspector';
+
+const config: HardhatUserConfig = {
+  plugins: [
+    HardhatStorageLayoutInspector,
+  ],
+  storageLayoutDiff: {
+    ... // see table for configuration options
+  },
+};
 ```
 
 Add configuration under the `storageLayoutDiff` key:
@@ -29,42 +40,46 @@ Add configuration under the `storageLayoutDiff` key:
 | `except`  | `Array` of `String` matchers used to exclude contracts                                                     | `[]`                                                           |
 | `spacing` | number of spaces per indentation level of formatted output                                                 | `2`                                                            |
 
+Additional configuration options are provided by [`@solidstate/hardhat-git`](https://www.npmjs.com/package/@solidstate/hardhat-git), which is included as a dependency.
+
 Export storage layouts:
 
 ```bash
 npx hardhat export-storage-layout
 # or
-yarn run hardhat export-storage-layout
+pnpm hardhat export-storage-layout
+```
+
+Inspect a contract's storage layout:
+
+```bash
+npx hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
+# or
+pnpm hardhat inspect-storage-layout [CONTRACT_IDENTIFIER]
 ```
 
 Compare two contracts:
 
 ```bash
-npx hardhat diff-storage-layout [CONTRACT_A_FULLY_QUALIFIED_NAME] [CONTRACT_B_FULLY_QUALIFIED_NAME]
+npx hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 # or
-yarn run hardhat diff-storage-layout [CONTRACT_A_FULLY_QUALIFIED_NAME] [CONTRACT_B_FULLY_QUALIFIED_NAME]
+pnpm hardhat diff-storage-layout [CONTRACT_A_IDENTIFIER] [CONTRACT_B_IDENTIFIER]
 ```
 
-Include the optional `--a-ref` and/or `--b-ref` arguments to specify the git reference where contracts `a` and `b` are defined, respectively.
+A contract identifier may be a name, a fully qualified name, or a path to a JSON file containing a storage layout.
 
-Compare a contract to an exported JSON layout:
-
-```bash
-npx hardhat storage-layout-check --source [PATH_TO_LAYOUT_JSON] --b [CONTRACT_B_FULLY_QUALIFIED_NAME]
-# or
-yarn run hardhat storage-layout-check --source [PATH_TO_LAYOUT_JSON] --b [CONTRACT_B_FULLY_QUALIFIED_NAME]
-```
+Include the optional git rev options to look up a contract identifier at a particular git revision.
 
 ## Development
 
-Install dependencies via Yarn:
+Install dependencies via pnpm:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Setup Husky to format code on commit:
 
 ```bash
-yarn prepare
+pnpm prepare
 ```

@@ -1,4 +1,6 @@
-export const TASK_EXPORT_STORAGE_LAYOUT = 'export-storage-layout';
-export const TASK_STORAGE_LAYOUT_CHECK = 'storage-layout-check';
-export const TASK_DIFF_STORAGE_LAYOUT = 'diff-storage-layout';
-export const TASK_INSPECT_STORAGE_LAYOUT = 'inspect-storage-layout';
+// TODO: import task name from Hardhat
+export const TASK_COMPILE = 'compile';
+export const TASK_STORAGE_LAYOUT = 'storage-layout';
+export const TASK_STORAGE_LAYOUT_DIFF = [TASK_STORAGE_LAYOUT, 'diff'];
+export const TASK_STORAGE_LAYOUT_EXPORT = [TASK_STORAGE_LAYOUT, 'export'];
+export const TASK_STORAGE_LAYOUT_INSPECT = [TASK_STORAGE_LAYOUT, 'inspect'];

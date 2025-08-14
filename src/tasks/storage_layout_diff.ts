@@ -1,0 +1,32 @@
+import { TASK_STORAGE_LAYOUT_DIFF } from '../task_names.js';
+import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
+
+export default task(TASK_STORAGE_LAYOUT_DIFF)
+  .addPositionalArgument({
+    name: 'a',
+    description: 'First contract whose storage layout to inspect',
+  })
+  .addPositionalArgument({
+    name: 'b',
+    description: 'Second contract whose storage layout to inspect',
+  })
+  .addOption({
+    name: 'aRev',
+    description: 'Git revision where contract A is defined',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
+  })
+  .addOption({
+    name: 'bRev',
+    description: 'Git revision where contract B is defined',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
+  })
+  .addFlag({
+    name: 'noCompile',
+    description:
+      'Do not compile before running this task (not applicable to HREs corresponding to git revisions)',
+  })
+  .setAction(() => import('../actions/storage_layout_diff.js'))
+  .build();
