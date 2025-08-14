@@ -17,11 +17,11 @@ pnpm add -D @solidstate/hardhat-storage-layout-inspector
 Load plugin in Hardhat config:
 
 ```javascript
-import HardhatStorageLayoutInspector from '@solidstate/hardhat-storage-layout-inspector';
+import hardhatStorageLayoutInspector from '@solidstate/hardhat-storage-layout-inspector';
 
 const config: HardhatUserConfig = {
   plugins: [
-    HardhatStorageLayoutInspector,
+    hardhatStorageLayoutInspector,
   ],
   storageLayoutDiff: {
     ... // see table for configuration options
