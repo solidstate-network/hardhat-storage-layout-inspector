@@ -10,17 +10,17 @@ importers:
     dependencies:
       '@solidstate/hardhat-git':
         specifier: ^1.0.0
-        version: 1.0.0(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0)
+        version: 1.0.0(@nomicfoundation/hardhat-utils@3.0.0)(hardhat@3.0.0)
       '@solidstate/hardhat-solidstate-utils':
         specifier: ^1.0.0
-        version: 1.0.0(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0)
+        version: 1.0.0(@nomicfoundation/hardhat-utils@3.0.0)(hardhat@3.0.0)
       chalk:
         specifier: ^5.5.0
         version: 5.5.0
     devDependencies:
       '@nomicfoundation/hardhat-utils':
-        specifier: 3.0.0-next.11
-        version: 3.0.0-next.11
+        specifier: ^3.0.0
+        version: 3.0.0
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^5.2.2
         version: 5.2.2(@vue/compiler-sfc@3.5.16)(prettier@3.6.2)
@@ -350,9 +350,6 @@ packages:
 
   '@nomicfoundation/hardhat-utils@3.0.0':
     resolution: {integrity: sha512-dpzumbxM69ny/BSVd/8jquZO3wjg61e+S81DJPJwQ7naeZNai1r9gYuxT65VgKKTYZG/xKwrP36tJvB+gRtBrg==}
-
-  '@nomicfoundation/hardhat-utils@3.0.0-next.11':
-    resolution: {integrity: sha512-syTQ8mi6O78PJow9NkIvzjEmv6PyMS+bfb4torAIMOIe8sj0sWXKK2ceWwvvOVhcWSzDsyTQaRsoyV8qwTZDCA==}
 
   '@nomicfoundation/hardhat-zod-utils@3.0.0':
     resolution: {integrity: sha512-xAi+45+V82pZZ9QGDEiii0wp+SXXH/8hS7/pk7S0gOG6h29gPuE42yek8wh3Ff0M+DrsB/RKZjcezmdwH5a6mQ==}
@@ -1375,19 +1372,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nomicfoundation/hardhat-utils@3.0.0-next.11':
-    dependencies:
-      '@streamparser/json-node': 0.0.22
-      debug: 4.4.1
-      env-paths: 2.2.1
-      ethereum-cryptography: 2.2.1
-      fast-equals: 5.2.2
-      json-stream-stringify: 3.1.6
-      rfdc: 1.4.1
-      undici: 6.21.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@nomicfoundation/hardhat-zod-utils@3.0.0(zod@3.25.7)':
     dependencies:
       '@nomicfoundation/hardhat-utils': 3.0.0
@@ -1492,10 +1476,10 @@ snapshots:
 
   '@solidity-parser/parser@0.20.1': {}
 
-  '@solidstate/hardhat-git@1.0.0(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0)':
+  '@solidstate/hardhat-git@1.0.0(@nomicfoundation/hardhat-utils@3.0.0)(hardhat@3.0.0)':
     dependencies:
-      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
-      '@solidstate/hardhat-solidstate-utils': 1.0.0(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0)
+      '@nomicfoundation/hardhat-utils': 3.0.0
+      '@solidstate/hardhat-solidstate-utils': 1.0.0(@nomicfoundation/hardhat-utils@3.0.0)(hardhat@3.0.0)
       chalk: 5.5.0
       env-paths: 3.0.0
       hardhat: 3.0.0
@@ -1505,9 +1489,9 @@ snapshots:
       - debug
       - supports-color
 
-  '@solidstate/hardhat-solidstate-utils@1.0.0(@nomicfoundation/hardhat-utils@3.0.0-next.11)(hardhat@3.0.0)':
+  '@solidstate/hardhat-solidstate-utils@1.0.0(@nomicfoundation/hardhat-utils@3.0.0)(hardhat@3.0.0)':
     dependencies:
-      '@nomicfoundation/hardhat-utils': 3.0.0-next.11
+      '@nomicfoundation/hardhat-utils': 3.0.0
       axios: 1.11.0
       chalk: 5.5.0
       cli-table3: 0.6.5
