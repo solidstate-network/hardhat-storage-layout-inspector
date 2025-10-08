@@ -23,8 +23,8 @@
   },
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist/",
+    "src/"
   ],
   "scripts": {
     "build": "pnpm clean && tsc --build",
