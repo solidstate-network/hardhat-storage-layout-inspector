@@ -53,7 +53,7 @@ const getStorageLayoutFromArtifact = async (
     contractNameOrFullyQualifiedName,
   );
 
-  const { buildInfoId, sourceName, contractName } = artifact;
+  const { buildInfoId, inputSourceName, contractName } = artifact;
 
   const buildInfoPath = await hre.artifacts.getBuildInfoOutputPath(
     buildInfoId!,
@@ -64,7 +64,7 @@ const getStorageLayoutFromArtifact = async (
   )) as SolidityBuildInfoOutput;
 
   const { storageLayout } =
-    buildInfo.output.contracts![sourceName][contractName];
+    buildInfo.output.contracts![inputSourceName!][contractName];
 
   validateStorageLayout(storageLayout, contractNameOrFullyQualifiedName);
 
