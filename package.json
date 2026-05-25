@@ -1,6 +1,6 @@
 {
   "name": "@solidstate/hardhat-storage-layout-inspector",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Compare storage layouts between two contracts",
   "keywords": [
     "hardhat",
