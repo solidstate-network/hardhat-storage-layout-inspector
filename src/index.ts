@@ -3,7 +3,7 @@ import taskStorageLayout from './tasks/storage_layout.js';
 import taskStorageLayoutDiff from './tasks/storage_layout_diff.js';
 import taskStorageLayoutExport from './tasks/storage_layout_export.js';
 import taskStorageLayoutInspect from './tasks/storage_layout_inspect.js';
-import './type_extensions';
+import './type_extensions.js';
 import type { HardhatPlugin } from 'hardhat/types/plugins';
 
 const plugin: HardhatPlugin = {
