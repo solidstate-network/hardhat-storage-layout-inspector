@@ -5,6 +5,7 @@ import { remove, writeUtf8File } from '@nomicfoundation/hardhat-utils/fs';
 import { filter } from '@solidstate/hardhat-solidstate-utils/filter';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
+import { parseFullyQualifiedName } from 'hardhat/utils/contract-names';
 import path from 'node:path';
 
 interface TaskActionArguments {
@@ -52,8 +53,11 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
 
     if (!storage.length) continue;
 
-    const destination =
-      path.resolve(outputDirectory, config.flat ? '' : '', fullName) + '.json';
+    const { sourceName, contractName } = parseFullyQualifiedName(fullName);
+
+    const destination = config.flat
+      ? path.resolve(outputDirectory, contractName) + '.json'
+      : path.resolve(outputDirectory, sourceName, contractName) + '.json';
 
     await writeUtf8File(
       destination,
