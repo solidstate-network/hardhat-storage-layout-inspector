@@ -4,9 +4,10 @@ import taskStorageLayoutDiff from './tasks/storage_layout_diff.js';
 import taskStorageLayoutExport from './tasks/storage_layout_export.js';
 import taskStorageLayoutInspect from './tasks/storage_layout_inspect.js';
 import './type_extensions.js';
+import { definePlugin } from 'hardhat/plugins';
 import type { HardhatPlugin } from 'hardhat/types/plugins';
 
-const plugin: HardhatPlugin = {
+const plugin: HardhatPlugin = definePlugin({
   id: pkg.name,
   npmPackage: pkg.name,
   dependencies: () => [
@@ -22,6 +23,6 @@ const plugin: HardhatPlugin = {
   hookHandlers: {
     config: () => import('./hooks/config.js'),
   },
-};
+});
 
 export default plugin;
